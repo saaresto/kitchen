@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Admin - <th:block th:include=":: #pageTitle">Page Title</th:block></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .nav-link {
+            color: #495057;
+        }
+        .nav-link.active {
+            background-color: #e9ecef;
+            color: #212529;
+        }
+        .content {
+            padding: 20px;
+        }
+        .booking-card {
+            margin-bottom: 15px;
+        }
+        .status-pending {
+            color: #ffc107;
+        }
+        .status-confirmed {
+            color: #28a745;
+        }
+        .status-declined {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <h3 class="text-center mb-4">Restaurant Admin</h3>
+                <div class="d-flex flex-column">
+                    <a class="nav-link py-2" th:classappend="${activeTab == 'pending' ? 'active' : ''}" 
+                       th:href="@{/admin/bookings/pending}">
+                        <i class="bi bi-hourglass me-2"></i> Pending Bookings
+                    </a>
+                    <a class="nav-link py-2" th:classappend="${activeTab == 'today' ? 'active' : ''}" 
+                       th:href="@{/admin/bookings/today}">
+                        <i class="bi bi-calendar-day me-2"></i> Today's Bookings
+                    </a>
+                    <a class="nav-link py-2" th:classappend="${activeTab == 'history' ? 'active' : ''}" 
+                       th:href="@{/admin/bookings/history}">
+                        <i class="bi bi-clock-history me-2"></i> Booking History
+                    </a>
+                    <hr>
+                    <a class="nav-link py-2" href="/logout">
+                        <i class="bi bi-box-arrow-right me-2"></i> Logout
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 content">
+                <div th:if="${message}" class="alert" th:classappend="${messageType == 'success' ? 'alert-success' : 'alert-danger'}" th:text="${message}">
+                    Alert message
+                </div>
+                
+                <div th:replace="${content}">
+                    Page content goes here
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Additional scripts for specific pages -->
+    <th:block th:replace="${scripts}"></th:block>
+</body>
+</html>

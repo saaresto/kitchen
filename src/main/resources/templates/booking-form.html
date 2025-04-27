@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make a Reservation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .booking-form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="booking-form">
+            <h2 class="text-center mb-4">Make a Reservation</h2>
+            
+            <div th:if="${success}" class="alert alert-success">
+                Your booking has been submitted successfully! We will contact you to confirm your reservation.
+            </div>
+            
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}">
+                An error occurred while processing your booking.
+            </div>
+            
+            <form th:action="@{/bookings/create}" method="post" th:object="${bookingRequest}">
+                <div class="form-group">
+                    <label for="mainVisitorName">Your Name</label>
+                    <input type="text" class="form-control" id="mainVisitorName" th:field="*{mainVisitorName}" required>
+                    <div class="error-message" th:if="${#fields.hasErrors('mainVisitorName')}" th:errors="*{mainVisitorName}"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mainVisitorPhone">Phone Number</label>
+                    <input type="tel" class="form-control" id="mainVisitorPhone" th:field="*{mainVisitorPhone}" required>
+                    <div class="error-message" th:if="${#fields.hasErrors('mainVisitorPhone')}" th:errors="*{mainVisitorPhone}"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="visitorsCount">Number of Guests</label>
+                    <input type="number" class="form-control" id="visitorsCount" th:field="*{visitorsCount}" min="1" required>
+                    <div class="error-message" th:if="${#fields.hasErrors('visitorsCount')}" th:errors="*{visitorsCount}"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dateTime">Date and Time</label>
+                    <input type="datetime-local" class="form-control" id="dateTime" th:field="*{dateTime}" required>
+                    <small class="form-text text-muted">Reservations can only be made at the beginning of the hour or half past (e.g., 18:00 or 18:30)</small>
+                    <div class="error-message" th:if="${#fields.hasErrors('dateTime')}" th:errors="*{dateTime}"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tableId">Table Number (Optional)</label>
+                    <input type="number" class="form-control" id="tableId" th:field="*{tableId}" min="1">
+                    <small class="form-text text-muted">Leave empty if you don't have a preference</small>
+                    <div class="error-message" th:if="${#fields.hasErrors('tableId')}" th:errors="*{tableId}"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">Special Requests or Notes</label>
+                    <textarea class="form-control" id="notes" th:field="*{notes}" rows="3"></textarea>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary">Submit Reservation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
