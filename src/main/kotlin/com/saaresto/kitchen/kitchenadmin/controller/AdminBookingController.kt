@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Controller
@@ -139,6 +140,7 @@ class AdminBookingController(private val bookingService: BookingService) {
 
             model.addAttribute("booking", booking)
             model.addAttribute("bookingRequest", bookingRequest)
+            model.addAttribute("bookingDateTime", bookingRequest.dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
             model.addAttribute("content", "admin/booking-edit :: content")
 
             return "admin/layout"

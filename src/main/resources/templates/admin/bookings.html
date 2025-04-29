@@ -1,32 +1,32 @@
 <div th:fragment="content">
         <h1 class="mb-4">Bookings Management</h1>
 
-        <ul class="nav nav-tabs mb-4" id="bookingTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" th:classappend="${activeTab == 'pending' ? 'active' : ''}" 
-                        id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" 
-                        type="button" role="tab" aria-controls="pending" 
-                        th:aria-selected="${activeTab == 'pending'}">
-                    <i class="bi bi-hourglass me-2"></i> Pending Bookings
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" th:classappend="${activeTab == 'today' ? 'active' : ''}" 
-                        id="today-tab" data-bs-toggle="tab" data-bs-target="#today" 
-                        type="button" role="tab" aria-controls="today" 
-                        th:aria-selected="${activeTab == 'today'}">
-                    <i class="bi bi-calendar-day me-2"></i> Today's Bookings
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" th:classappend="${activeTab == 'history' ? 'active' : ''}" 
-                        id="history-tab" data-bs-toggle="tab" data-bs-target="#history" 
-                        type="button" role="tab" aria-controls="history" 
-                        th:aria-selected="${activeTab == 'history'}">
-                    <i class="bi bi-clock-history me-2"></i> Booking History
-                </button>
-            </li>
-        </ul>
+<!--        <ul class="nav nav-tabs mb-4" id="bookingTabs" role="tablist">-->
+<!--            <li class="nav-item" role="presentation">-->
+<!--                <button class="nav-link" th:classappend="${activeTab == 'pending' ? 'active' : ''}" -->
+<!--                        id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" -->
+<!--                        type="button" role="tab" aria-controls="pending" -->
+<!--                        th:aria-selected="${activeTab == 'pending'}">-->
+<!--                    <i class="bi bi-hourglass me-2"></i> Pending Bookings-->
+<!--                </button>-->
+<!--            </li>-->
+<!--            <li class="nav-item" role="presentation">-->
+<!--                <button class="nav-link" th:classappend="${activeTab == 'today' ? 'active' : ''}" -->
+<!--                        id="today-tab" data-bs-toggle="tab" data-bs-target="#today" -->
+<!--                        type="button" role="tab" aria-controls="today" -->
+<!--                        th:aria-selected="${activeTab == 'today'}">-->
+<!--                    <i class="bi bi-calendar-day me-2"></i> Today's Bookings-->
+<!--                </button>-->
+<!--            </li>-->
+<!--            <li class="nav-item" role="presentation">-->
+<!--                <button class="nav-link" th:classappend="${activeTab == 'history' ? 'active' : ''}" -->
+<!--                        id="history-tab" data-bs-toggle="tab" data-bs-target="#history" -->
+<!--                        type="button" role="tab" aria-controls="history" -->
+<!--                        th:aria-selected="${activeTab == 'history'}">-->
+<!--                    <i class="bi bi-clock-history me-2"></i> Booking History-->
+<!--                </button>-->
+<!--            </li>-->
+<!--        </ul>-->
 
         <div class="tab-content" id="bookingTabsContent">
             <!-- Pending Bookings Tab -->
@@ -37,7 +37,7 @@
                     <div class="col-md-6">
                         <form th:action="@{/admin/bookings}" method="get" class="d-flex">
                             <input type="hidden" name="tab" value="pending">
-                            <input type="date" class="form-control me-2" name="date" th:value="${filterDate != null ? #temporals.format(filterDate, 'yyyy-MM-dd') : ''}" />
+                            <input type="text" class="form-control me-2" name="date" th:value="${filterDate != null ? #temporals.format(filterDate, 'yyyy-MM-dd') : ''}" data-flatpickr="date" />
                             <button type="submit" class="btn btn-outline-primary">Filter</button>
                         </form>
                     </div>
@@ -194,11 +194,11 @@
                             <input type="hidden" name="tab" value="history">
                             <div class="input-group me-2">
                                 <span class="input-group-text">From</span>
-                                <input type="date" class="form-control" name="startDate" th:value="${startDate != null ? #temporals.format(startDate, 'yyyy-MM-dd') : ''}" />
+                                <input type="text" class="form-control" name="startDate" th:value="${startDate != null ? #temporals.format(startDate, 'yyyy-MM-dd') : ''}" data-flatpickr="date" />
                             </div>
                             <div class="input-group me-2">
                                 <span class="input-group-text">To</span>
-                                <input type="date" class="form-control" name="endDate" th:value="${endDate != null ? #temporals.format(endDate, 'yyyy-MM-dd') : ''}" />
+                                <input type="text" class="form-control" name="endDate" th:value="${endDate != null ? #temporals.format(endDate, 'yyyy-MM-dd') : ''}" data-flatpickr="date" />
                             </div>
                             <input type="hidden" name="page" th:value="${currentPage != null ? currentPage : 0}">
                             <button type="submit" class="btn btn-outline-primary">Filter</button>

@@ -6,6 +6,7 @@
     <title>Restaurant Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         .sidebar {
             min-height: 100vh;
@@ -89,6 +90,32 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!-- Initialize Flatpickr for all date inputs -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize date-only pickers
+        flatpickr("input[data-flatpickr='date']", {
+            dateFormat: "Y-m-d",
+            allowInput: true
+        });
+
+        // Initialize date-time pickers
+        flatpickr("input[data-flatpickr='datetime']", {
+            // defaultDate: "today",
+            altInput: true,
+            altFormat: "F j, Y, H:i",
+            minTime: "12:00",
+            maxTime: "23:30",
+            enableTime: true,
+            // dateFormat: "Y-m-d\\TH:i:S",
+            dateFormat: "d.m.Y, H:i",
+            time_24hr: true,
+            allowInput: true
+        });
+    });
+</script>
 
 <!-- Additional scripts for specific pages -->
 <!--    <th:block th:replace="${scripts}"></th:block>-->

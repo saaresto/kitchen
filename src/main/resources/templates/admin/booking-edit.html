@@ -5,14 +5,14 @@
 </head>
 <body>
     <div id="pageTitle">Edit Booking</div>
-    
+
     <div th:fragment="content">
         <h1 class="mb-4">Edit Booking</h1>
-        
+
         <div th:if="${error}" class="alert alert-danger" th:text="${error}">
             An error occurred while processing your booking.
         </div>
-        
+
         <form th:action="@{/admin/bookings/{id}/edit(id=${booking.id})}" method="post" th:object="${bookingRequest}">
             <div class="row">
                 <div class="col-md-6">
@@ -26,13 +26,13 @@
                                 <input type="text" class="form-control" id="mainVisitorName" th:field="*{mainVisitorName}" required>
                                 <div class="text-danger" th:if="${#fields.hasErrors('mainVisitorName')}" th:errors="*{mainVisitorName}"></div>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label for="mainVisitorPhone" class="form-label">Phone Number</label>
                                 <input type="tel" class="form-control" id="mainVisitorPhone" th:field="*{mainVisitorPhone}" required>
                                 <div class="text-danger" th:if="${#fields.hasErrors('mainVisitorPhone')}" th:errors="*{mainVisitorPhone}"></div>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label for="visitorsCount" class="form-label">Number of Guests</label>
                                 <input type="number" class="form-control" id="visitorsCount" th:field="*{visitorsCount}" min="1" required>
@@ -41,7 +41,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-md-6">
                     <div class="card mb-4">
                         <div class="card-header">
@@ -56,14 +56,14 @@
                                     <option value="DECLINED" th:selected="${booking.status.name() == 'DECLINED'}">Declined</option>
                                 </select>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label for="dateTime" class="form-label">Date and Time</label>
-                                <input type="datetime-local" class="form-control" id="dateTime" th:field="*{dateTime}" required>
+                                <input type="text" class="form-control" id="dateTime" th:field="*{dateTime}" required data-flatpickr="datetime">
                                 <small class="form-text text-muted">Reservations can only be made at the beginning of the hour or half past (e.g., 18:00 or 18:30)</small>
                                 <div class="text-danger" th:if="${#fields.hasErrors('dateTime')}" th:errors="*{dateTime}"></div>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label for="tableId" class="form-label">Table Number</label>
                                 <input type="number" class="form-control" id="tableId" th:field="*{tableId}" min="1" required>
@@ -72,7 +72,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-12">
                     <div class="card mb-4">
                         <div class="card-header">
@@ -87,7 +87,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="d-flex justify-content-between mt-4">
                 <a th:href="@{/admin/bookings/pending}" class="btn btn-secondary">Cancel</a>
                 <button type="submit" class="btn btn-primary">Save Changes</button>
