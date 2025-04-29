@@ -51,10 +51,6 @@ class BookingFormController(private val bookingService: BookingService) {
             bindingResult.rejectValue("visitorsCount", "error.visitorsCount", "Number of guests must be at least 1")
         }
         
-        if (bookingRequest.tableId < 1) {
-            bindingResult.rejectValue("tableId", "error.tableId", "Table number must be at least 1")
-        }
-        
         if (bindingResult.hasErrors()) {
             return "booking-form"
         }
@@ -65,7 +61,7 @@ class BookingFormController(private val bookingService: BookingService) {
                 mainVisitorPhone = bookingRequest.mainVisitorPhone,
                 visitorsCount = bookingRequest.visitorsCount,
                 dateTime = bookingRequest.dateTime,
-                tableId = bookingRequest.tableId,
+                tableId = bookingRequest.tableId ?: -1,
                 notes = bookingRequest.notes
             )
             

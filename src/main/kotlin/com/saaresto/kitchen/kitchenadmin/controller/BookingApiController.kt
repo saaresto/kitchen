@@ -54,7 +54,7 @@ class BookingApiController(private val bookingService: BookingService) {
                 mainVisitorPhone = request.mainVisitorPhone,
                 visitorsCount = request.visitorsCount,
                 dateTime = request.dateTime,
-                tableId = request.tableId,
+                tableId = request.tableId ?: -1,
                 notes = request.notes
             )
             val createdBooking = bookingService.createBooking(booking)
@@ -78,7 +78,7 @@ class BookingApiController(private val bookingService: BookingService) {
                 mainVisitorPhone = request.mainVisitorPhone,
                 visitorsCount = request.visitorsCount,
                 dateTime = request.dateTime,
-                tableId = request.tableId,
+                tableId = request.tableId ?: -1,
                 notes = request.notes
             )
             val updatedBooking = bookingService.updateBooking(id, booking)

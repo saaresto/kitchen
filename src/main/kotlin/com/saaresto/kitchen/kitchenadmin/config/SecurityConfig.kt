@@ -51,7 +51,7 @@ class SecurityConfig {
             }
             .formLogin {
                 it.loginPage("/login")
-                it.defaultSuccessUrl("/admin/bookings/pending")
+                it.defaultSuccessUrl("/admin/bookings?tab=pending")
                 it.permitAll()
             }
             .logout {

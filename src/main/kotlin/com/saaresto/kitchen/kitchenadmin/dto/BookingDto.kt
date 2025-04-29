@@ -13,7 +13,7 @@ data class BookingRequest(
     val mainVisitorPhone: String,
     val visitorsCount: Int,
     val dateTime: LocalDateTime,
-    val tableId: Int,
+    val tableId: Int?,
     val notes: String? = null
 )
 
