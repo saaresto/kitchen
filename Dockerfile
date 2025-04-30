@@ -1,3 +1,19 @@
+# Build stage
+FROM gradle:7.6.1-jdk17-alpine AS build
+
+WORKDIR /app
+
+# Copy the build files
+COPY build.gradle.kts settings.gradle.kts ./
+COPY gradle ./gradle
+
+# Copy the source code
+COPY src ./src
+
+# Build the application
+RUN gradle bootJar --no-daemon
+
+# Runtime stage
 FROM eclipse-temurin:17-jdk-alpine
 
 # Install wget for health check
@@ -5,8 +21,8 @@ RUN apk add --no-cache wget
 
 WORKDIR /app
 
-# Copy the JAR file
-COPY build/libs/*.jar app.jar
+# Copy the JAR file from the build stage
+COPY --from=build /app/build/libs/*.jar app.jar
 
 # Expose the port the app runs on
 EXPOSE 8080

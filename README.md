@@ -6,21 +6,11 @@ A Spring Boot application for restaurant kitchen administration.
 
 ### Prerequisites
 
-- Java 17 or later
-- Gradle
 - Docker
 
-### Building the Application
-
-1. Build the application JAR file:
-
-```bash
-./gradlew clean bootJar
-```
-
-This will create a JAR file in the `build/libs` directory.
-
 ### Building the Docker Image
+
+The Dockerfile uses a multi-stage build process that automatically builds the application, so you don't need to build it locally first.
 
 1. Build the Docker image:
 
