@@ -74,6 +74,10 @@
                                     <i class="bi bi-grid"></i> 
                                     Table <span th:text="${booking.tableId}">5</span>
                                 </p>
+                                <p class="card-text">
+                                    <i class="bi bi-clock"></i> 
+                                    Created: <span th:text="${#temporals.format(booking.createdAt, 'yyyy-MM-dd HH:mm')}">2023-05-20 19:00</span>
+                                </p>
                                 <p class="card-text" th:if="${booking.notes}">
                                     <i class="bi bi-chat-left-text"></i> 
                                     <span th:text="${booking.notes}">Special requests</span>
@@ -152,6 +156,10 @@
                                     <i class="bi bi-grid"></i> 
                                     Table <span th:text="${booking.tableId}">5</span>
                                 </p>
+                                <p class="card-text">
+                                    <i class="bi bi-clock"></i> 
+                                    Created: <span th:text="${#temporals.format(booking.createdAt, 'yyyy-MM-dd HH:mm')}">2023-05-20 19:00</span>
+                                </p>
                                 <p class="card-text" th:if="${booking.notes}">
                                     <i class="bi bi-chat-left-text"></i> 
                                     <span th:text="${booking.notes}">Special requests</span>
@@ -220,6 +228,7 @@
                                 <th>Guests</th>
                                 <th>Table</th>
                                 <th>Status</th>
+                                <th>Created At</th>
                                 <th>Notes</th>
                                 <th>Actions</th>
                             </tr>
@@ -234,6 +243,7 @@
                                 <td>
                                     <span class="badge" th:classappend="${booking.status.name() == 'PENDING' ? 'bg-warning' : (booking.status.name() == 'CONFIRMED' ? 'bg-success' : 'bg-danger')}" th:text="${booking.status.name()}">Status</span>
                                 </td>
+                                <td th:text="${#temporals.format(booking.createdAt, 'yyyy-MM-dd HH:mm')}">2023-05-20 19:00</td>
                                 <td th:text="${booking.notes}">Special requests</td>
                                 <td>
                                     <a th:href="@{/admin/bookings/{id}/edit(id=${booking.id})}" class="btn btn-sm btn-primary">

@@ -38,3 +38,6 @@ springdoc:
     tagsSorter: alpha
   api-docs:
     path: /api-docs
+
+notification:
+  token: ${NOTIFICATION_TOKEN:adminadminadmin}

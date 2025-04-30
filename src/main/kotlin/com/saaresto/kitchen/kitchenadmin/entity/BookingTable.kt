@@ -18,4 +18,5 @@ object BookingTable : UUIDTable("bookings") {
     val dateTime: Column<LocalDateTime> = datetime("date_time")
     val tableId: Column<Int> = integer("table_id")
     val notes: Column<String?> = text("notes").nullable()
+    val createdAt: Column<LocalDateTime> = datetime("created_at")
 }

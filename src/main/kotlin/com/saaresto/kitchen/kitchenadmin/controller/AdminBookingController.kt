@@ -46,8 +46,8 @@ class AdminBookingController(private val bookingService: BookingService) {
                     it.dateTime < endOfDay 
                 }
             } else {
-                // Show all pending bookings
-                bookingService.getBookingsByStatus(BookingStatus.PENDING)
+                // Show all pending bookings, sorted by createdAt (earliest first)
+                bookingService.getPendingBookingsOrderByCreatedAt()
             }
 
             model.addAttribute("pendingBookings", pendingBookings)

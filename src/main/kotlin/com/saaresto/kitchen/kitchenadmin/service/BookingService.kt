@@ -7,13 +7,15 @@ import com.saaresto.kitchen.kitchenadmin.repository.BookingRepository
 import com.saaresto.kitchen.kitchenadmin.repository.VisitorRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 @Service
 class BookingService(
     private val bookingRepository: BookingRepository,
-    private val visitorRepository: VisitorRepository
+    private val visitorRepository: VisitorRepository,
+    private val notificationService: NotificationService
 ) {
 
     /**
@@ -35,10 +37,16 @@ class BookingService(
         bookingRepository.findByStatus(status)
 
     /**
+     * Get pending bookings sorted by createdAt (earliest first).
+     */
+    fun getPendingBookingsOrderByCreatedAt(): List<Booking> =
+        bookingRepository.findByStatusOrderByCreatedAt(BookingStatus.PENDING)
+
+    /**
      * Get bookings for today.
      */
     fun getTodayBookings(): List<Booking> = 
-        bookingRepository.findByDate(LocalDateTime.now())
+        bookingRepository.findByDate(LocalDateTime.now()).filter { it.status == BookingStatus.CONFIRMED }
 
     /**
      * Create a new booking.
@@ -47,18 +55,23 @@ class BookingService(
     fun createBooking(booking: Booking): Booking {
         // Validate booking time (must be at the beginning of the hour or half past)
         validateBookingTime(booking.dateTime)
-        
+
         // Save the booking
         val savedBooking = bookingRepository.save(booking)
-        
+
         // Create a visitor record for the main visitor
         val visitor = Visitor(
             phoneNumber = booking.mainVisitorPhone,
             name = booking.mainVisitorName,
-            notes = "Created from booking ${booking.id}"
+            notes = "Created at ${booking.dateTime.format(DateTimeFormatter.ISO_DATE_TIME)} from booking ${booking.id}"
         )
         visitorRepository.save(visitor)
-        
+
+        // Send notification to staff members if booking is pending
+        if (savedBooking.status == BookingStatus.PENDING) {
+            notificationService.sendBookingNotification(savedBooking)
+        }
+
         return savedBooking
     }
 
@@ -71,10 +84,10 @@ class BookingService(
         // Check if booking exists
         bookingRepository.findById(id)
             ?: throw NoSuchElementException("Booking with ID $id not found")
-        
+
         // Validate booking time
         validateBookingTime(booking.dateTime)
-        
+
         // Update with the provided ID
         return bookingRepository.save(booking.copy(id = id))
     }
@@ -116,7 +129,7 @@ class BookingService(
         if (minutes != 0 && minutes != 30) {
             throw IllegalArgumentException("Booking time must be at the beginning of the hour or half past (e.g., 9:00 or 9:30)")
         }
-        
+
         // Truncate seconds and nanos for consistency
         val truncatedDateTime = dateTime.truncatedTo(ChronoUnit.MINUTES)
         if (truncatedDateTime != dateTime) {

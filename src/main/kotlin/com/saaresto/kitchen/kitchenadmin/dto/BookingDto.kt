@@ -28,7 +28,8 @@ data class BookingResponse(
     val visitorsCount: Int,
     val dateTime: LocalDateTime,
     val tableId: Int,
-    val notes: String?
+    val notes: String?,
+    val createdAt: LocalDateTime
 ) {
     companion object {
         fun fromBooking(booking: Booking): BookingResponse = BookingResponse(
@@ -39,7 +40,8 @@ data class BookingResponse(
             visitorsCount = booking.visitorsCount,
             dateTime = booking.dateTime,
             tableId = booking.tableId,
-            notes = booking.notes
+            notes = booking.notes,
+            createdAt = booking.createdAt
         )
     }
 }

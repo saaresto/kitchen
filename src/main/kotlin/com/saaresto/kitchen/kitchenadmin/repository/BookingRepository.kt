@@ -38,12 +38,22 @@ class BookingRepository {
     }
 
     /**
+     * Find bookings by status, sorted by createdAt (earliest first).
+     */
+    fun findByStatusOrderByCreatedAt(status: BookingStatus): List<Booking> = transaction {
+        BookingTable.selectAll()
+            .where { BookingTable.status eq status.name }
+            .orderBy(BookingTable.createdAt to SortOrder.ASC)
+            .map { it.toBooking() }
+    }
+
+    /**
      * Find bookings for a specific date.
      */
     fun findByDate(date: LocalDateTime): List<Booking> = transaction {
         val startOfDay = date.toLocalDate().atStartOfDay()
         val endOfDay = startOfDay.plusDays(1)
-        
+
         BookingTable.selectAll()
             .where { 
                 (BookingTable.dateTime greaterEq startOfDay) and
@@ -69,6 +79,7 @@ class BookingRepository {
                 it[dateTime] = booking.dateTime
                 it[tableId] = booking.tableId
                 it[notes] = booking.notes
+                it[createdAt] = booking.createdAt
             }
         } else {
             // Update existing booking
@@ -80,6 +91,7 @@ class BookingRepository {
                 it[dateTime] = booking.dateTime
                 it[tableId] = booking.tableId
                 it[notes] = booking.notes
+                it[createdAt] = booking.createdAt
             }
         }
         booking
@@ -103,6 +115,7 @@ class BookingRepository {
         visitorsCount = this[BookingTable.visitorsCount],
         dateTime = this[BookingTable.dateTime],
         tableId = this[BookingTable.tableId],
-        notes = this[BookingTable.notes]
+        notes = this[BookingTable.notes],
+        createdAt = this[BookingTable.createdAt]
     )
 }

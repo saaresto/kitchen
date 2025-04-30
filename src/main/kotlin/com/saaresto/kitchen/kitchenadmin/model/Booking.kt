@@ -23,5 +23,6 @@ data class Booking(
     val visitorsCount: Int,
     val dateTime: LocalDateTime,
     val tableId: Int,
-    val notes: String? = null
+    val notes: String? = null,
+    val createdAt: LocalDateTime = LocalDateTime.now()
 )

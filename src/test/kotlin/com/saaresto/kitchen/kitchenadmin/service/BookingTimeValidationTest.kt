@@ -17,13 +17,15 @@ class BookingTimeValidationTest {
 
     private lateinit var bookingRepository: BookingRepository
     private lateinit var visitorRepository: VisitorRepository
+    private lateinit var notificationService: NotificationService
     private lateinit var bookingService: BookingService
 
     @BeforeEach
     fun setUp() {
         bookingRepository = mock(BookingRepository::class.java)
         visitorRepository = mock(VisitorRepository::class.java)
-        bookingService = BookingService(bookingRepository, visitorRepository)
+        notificationService = mock(NotificationService::class.java)
+        bookingService = BookingService(bookingRepository, visitorRepository, notificationService)
     }
 
     @Test
