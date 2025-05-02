@@ -8,6 +8,8 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.UUID
 
 @Repository
@@ -116,6 +118,6 @@ class BookingRepository {
         dateTime = this[BookingTable.dateTime],
         tableId = this[BookingTable.tableId],
         notes = this[BookingTable.notes],
-        createdAt = this[BookingTable.createdAt]
+        createdAt = this[BookingTable.createdAt].atZone(ZoneId.ofOffset("UTC", ZoneOffset.ofHours(5))).toLocalDateTime()
     )
 }
