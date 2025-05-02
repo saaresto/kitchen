@@ -187,7 +187,8 @@ class AdminBookingController(private val bookingService: BookingService) {
                 visitorsCount = bookingRequest.visitorsCount,
                 dateTime = bookingRequest.dateTime,
                 tableId = bookingRequest.tableId ?: -1,
-                notes = bookingRequest.notes
+                notes = bookingRequest.notes,
+                createdAt = existingBooking.createdAt  // Preserve the original createdAt date
             )
 
             bookingService.updateBooking(id, booking)

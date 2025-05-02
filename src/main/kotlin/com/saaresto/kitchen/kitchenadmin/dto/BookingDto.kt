@@ -2,6 +2,8 @@ package com.saaresto.kitchen.kitchenadmin.dto
 
 import com.saaresto.kitchen.kitchenadmin.model.Booking
 import com.saaresto.kitchen.kitchenadmin.model.BookingStatus
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -12,7 +14,7 @@ data class BookingRequest(
     val mainVisitorName: String,
     val mainVisitorPhone: String,
     val visitorsCount: Int,
-    val dateTime: LocalDateTime,
+    @DateTimeFormat(pattern = "dd.MM.yyyy, HH:mm") val dateTime: LocalDateTime,
     val tableId: Int? = 0,
     val notes: String? = null
 )
