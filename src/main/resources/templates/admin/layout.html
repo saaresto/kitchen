@@ -14,6 +14,38 @@
             padding-top: 20px;
         }
 
+        /* Make sidebar fit content on mobile */
+        @media (max-width: 767.98px) {
+            .sidebar {
+                min-height: auto;
+                width: auto;
+                padding: 15px;
+                border-radius: 4px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                margin-bottom: 15px;
+            }
+
+            .sidebar h3 {
+                font-size: 1.2rem;
+                margin-bottom: 10px;
+            }
+
+            .sidebar .nav-link {
+                padding: 0.4rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .sidebar .d-flex {
+                gap: 5px;
+            }
+
+            .sidebar-toggle-btn {
+                width: 100%;
+                text-align: left;
+                margin-bottom: 10px;
+            }
+        }
+
         .nav-link {
             color: #495057;
         }
@@ -47,8 +79,15 @@
 <body>
 <div class="container-fluid">
     <div class="row">
+        <!-- Mobile Sidebar Toggle -->
+        <div class="d-md-none col-12 mb-2">
+            <button class="btn btn-sm btn-outline-secondary sidebar-toggle-btn" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-expanded="false" aria-controls="sidebarMenu">
+                <i class="bi bi-list"></i> Menu
+            </button>
+        </div>
+
         <!-- Sidebar -->
-        <div class="col-md-3 col-lg-2 sidebar">
+        <div class="col-sm-auto col-md-3 col-lg-2 sidebar collapse d-md-block" id="sidebarMenu" aria-expanded="false">
             <h3 class="text-center mb-4">Restaurant Admin</h3>
             <div class="d-flex flex-column">
                 <a class="nav-link py-2" th:classappend="${activeTab == 'pending' ? 'active' : ''}"
@@ -71,7 +110,7 @@
         </div>
 
         <!-- Main Content -->
-        <div class="col-md-9 col-lg-10 content">
+        <div class="col-sm col-md-9 col-lg-10 content">
             <div th:if="${message}" class="alert"
                  th:classappend="${messageType == 'success' ? 'alert-success' : 'alert-danger'}" th:text="${message}">
                 Alert message
