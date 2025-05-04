@@ -54,6 +54,9 @@ class SecurityConfig {
                 it.defaultSuccessUrl("/admin/bookings?tab=pending")
                 it.permitAll()
             }
+            .rememberMe {
+                it.tokenValiditySeconds(86400)
+            }
             .logout {
                 it.logoutSuccessUrl("/login?logout")
                 it.permitAll()

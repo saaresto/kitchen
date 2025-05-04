@@ -38,9 +38,10 @@ class BookingService(
 
     /**
      * Get pending bookings sorted by createdAt (earliest first).
+     * This includes both PENDING and WAIT_LIST statuses.
      */
     fun getPendingBookingsOrderByCreatedAt(): List<Booking> =
-        bookingRepository.findByStatusOrderByCreatedAt(BookingStatus.PENDING)
+        bookingRepository.findByStatusesOrderByCreatedAt(listOf(BookingStatus.PENDING, BookingStatus.WAIT_LIST))
 
     /**
      * Get bookings for today.
@@ -126,6 +127,15 @@ class BookingService(
     fun declineBooking(id: UUID): Booking {
         val booking = getBookingById(id)
         return bookingRepository.save(booking.copy(status = BookingStatus.DECLINED))
+    }
+
+    /**
+     * Move a booking to wait list.
+     * @throws NoSuchElementException if booking not found
+     */
+    fun waitListBooking(id: UUID): Booking {
+        val booking = getBookingById(id)
+        return bookingRepository.save(booking.copy(status = BookingStatus.WAIT_LIST))
     }
 
     /**

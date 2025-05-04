@@ -51,6 +51,16 @@ class BookingRepository {
     }
 
     /**
+     * Find bookings by multiple statuses, sorted by createdAt (earliest first).
+     */
+    fun findByStatusesOrderByCreatedAt(statuses: List<BookingStatus>): List<Booking> = transaction {
+        BookingTable.selectAll()
+            .where { BookingTable.status inList statuses.map { it.name } }
+            .orderBy(BookingTable.createdAt to SortOrder.ASC)
+            .map { it.toBooking() }
+    }
+
+    /**
      * Find bookings for a specific date.
      */
     fun findByDate(date: LocalDateTime): List<Booking> = transaction {

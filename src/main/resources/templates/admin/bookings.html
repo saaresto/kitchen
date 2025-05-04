@@ -52,10 +52,10 @@
                         <div class="card booking-card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <span>
-                                    <i class="bi bi-hourglass status-pending"></i>
+                                    <i class="bi" th:classappend="${booking.status.name() == 'PENDING' ? 'bi-hourglass status-pending' : (booking.status.name() == 'WAIT_LIST' ? 'bi-hourglass-split status-waitlist' : '')}"></i>
                                     <strong th:text="${booking.mainVisitorName}">John Doe</strong>
                                 </span>
-                                <span class="badge bg-warning">Pending</span>
+                                <span class="badge" th:classappend="${booking.status.name() == 'PENDING' ? 'bg-warning' : (booking.status.name() == 'WAIT_LIST' ? 'bg-info' : '')}" th:text="${booking.status.name() == 'PENDING' ? 'Pending' : (booking.status.name() == 'WAIT_LIST' ? 'Wait List' : booking.status.name())}">Status</span>
                             </div>
                             <div class="card-body">
                                 <p class="card-text">
@@ -88,6 +88,13 @@
                                         <input type="hidden" name="tab" value="pending">
                                         <button type="submit" class="btn btn-success">
                                             <i class="bi bi-check-circle"></i> Confirm
+                                        </button>
+                                    </form>
+
+                                    <form th:action="@{/admin/bookings/{id}/waitlist(id=${booking.id})}" method="post" style="display: inline;">
+                                        <input type="hidden" name="tab" value="pending">
+                                        <button type="submit" class="btn btn-warning">
+                                            <i class="bi bi-hourglass-split"></i> Wait List
                                         </button>
                                     </form>
 
@@ -142,10 +149,10 @@
                         <div class="card booking-card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <span>
-                                    <i class="bi" th:classappend="${booking.status.name() == 'PENDING' ? 'bi-hourglass status-pending' : (booking.status.name() == 'CONFIRMED' ? 'bi-check-circle status-confirmed' : 'bi-x-circle status-declined')}"></i>
+                                    <i class="bi" th:classappend="${booking.status.name() == 'PENDING' ? 'bi-hourglass status-pending' : (booking.status.name() == 'CONFIRMED' ? 'bi-check-circle status-confirmed' : (booking.status.name() == 'WAIT_LIST' ? 'bi-hourglass-split status-waitlist' : 'bi-x-circle status-declined'))}"></i>
                                     <strong th:text="${booking.mainVisitorName}">John Doe</strong>
                                 </span>
-                                <span class="badge" th:classappend="${booking.status.name() == 'PENDING' ? 'bg-warning' : (booking.status.name() == 'CONFIRMED' ? 'bg-success' : 'bg-danger')}" th:text="${booking.status.name()}">Status</span>
+                                <span class="badge" th:classappend="${booking.status.name() == 'PENDING' ? 'bg-warning' : (booking.status.name() == 'CONFIRMED' ? 'bg-success' : (booking.status.name() == 'WAIT_LIST' ? 'bg-info' : 'bg-danger'))}" th:text="${booking.status.name() == 'PENDING' ? 'Pending' : (booking.status.name() == 'CONFIRMED' ? 'Confirmed' : (booking.status.name() == 'WAIT_LIST' ? 'Wait List' : 'Declined'))}">Status</span>
                             </div>
                             <div class="card-body">
                                 <p class="card-text">
@@ -257,7 +264,7 @@
                                 <td th:text="${booking.visitorsCount}">4</td>
                                 <td th:text="${booking.tableId}">5</td>
                                 <td>
-                                    <span class="badge" th:classappend="${booking.status.name() == 'PENDING' ? 'bg-warning' : (booking.status.name() == 'CONFIRMED' ? 'bg-success' : 'bg-danger')}" th:text="${booking.status.name()}">Status</span>
+                                    <span class="badge" th:classappend="${booking.status.name() == 'PENDING' ? 'bg-warning' : (booking.status.name() == 'CONFIRMED' ? 'bg-success' : (booking.status.name() == 'WAIT_LIST' ? 'bg-info' : 'bg-danger'))}" th:text="${booking.status.name() == 'PENDING' ? 'Pending' : (booking.status.name() == 'CONFIRMED' ? 'Confirmed' : (booking.status.name() == 'WAIT_LIST' ? 'Wait List' : 'Declined'))}">Status</span>
                                 </td>
                                 <td th:text="${#temporals.format(booking.createdAt, 'yyyy-MM-dd HH:mm')}">2023-05-20 19:00</td>
                                 <td th:text="${booking.notes}">Special requests</td>

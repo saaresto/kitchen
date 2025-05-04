@@ -9,7 +9,8 @@ import java.util.UUID
 enum class BookingStatus {
     PENDING,
     CONFIRMED,
-    DECLINED
+    DECLINED,
+    WAIT_LIST
 }
 
 /**

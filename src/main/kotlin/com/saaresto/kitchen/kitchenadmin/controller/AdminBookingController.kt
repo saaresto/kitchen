@@ -43,7 +43,7 @@ class AdminBookingController(private val bookingService: BookingService) {
                 val startOfDay = filterDate.atStartOfDay()
                 val endOfDay = filterDate.plusDays(1).atStartOfDay()
                 bookingService.getAllBookings().filter { 
-                    it.status == BookingStatus.PENDING && 
+                    (it.status == BookingStatus.PENDING || it.status == BookingStatus.WAIT_LIST) && 
                     it.dateTime >= startOfDay && 
                     it.dateTime < endOfDay 
                 }
@@ -242,6 +242,22 @@ class AdminBookingController(private val bookingService: BookingService) {
             redirectAttributes.addFlashAttribute("messageType", "success")
         } catch (e: Exception) {
             redirectAttributes.addFlashAttribute("message", "Error declining booking: ${e.message}")
+            redirectAttributes.addFlashAttribute("messageType", "danger")
+        }
+        return "redirect:/admin/bookings?tab=pending"
+    }
+
+    @PostMapping("/{id}/waitlist")
+    fun waitListBooking(
+        @PathVariable id: UUID, 
+        redirectAttributes: RedirectAttributes
+    ): String {
+        try {
+            bookingService.waitListBooking(id)
+            redirectAttributes.addFlashAttribute("message", "Booking moved to wait list successfully")
+            redirectAttributes.addFlashAttribute("messageType", "success")
+        } catch (e: Exception) {
+            redirectAttributes.addFlashAttribute("message", "Error moving booking to wait list: ${e.message}")
             redirectAttributes.addFlashAttribute("messageType", "danger")
         }
         return "redirect:/admin/bookings?tab=pending"
