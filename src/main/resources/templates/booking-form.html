@@ -76,7 +76,7 @@
                 </div>
 
                 <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-primary">Отправить заявку</button>
+                    <button type="submit" id="submitButton" class="btn btn-primary">Отправить заявку</button>
                 </div>
             </form>
         </div>
@@ -88,6 +88,17 @@
     <!-- Initialize Flatpickr for date inputs -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Prevent duplicate form submissions
+            const form = document.querySelector('form');
+            const submitButton = document.getElementById('submitButton');
+
+            form.addEventListener('submit', function() {
+                // Disable the button
+                submitButton.disabled = true;
+                // Change the text to indicate processing
+                submitButton.innerHTML = 'Отправка...';
+            });
+
             var now = new Date()
             now.setMinutes(0,0,0);
             now.setHours(now.getHours() + 1);
