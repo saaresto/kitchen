@@ -4,6 +4,7 @@ import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.ParseMode
 import com.saaresto.kitchen.kitchenadmin.model.Booking
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.format.DateTimeFormatter
 
@@ -12,6 +13,7 @@ class NotificationService(
     private val bot: Bot,
     private val staffService: StaffService
 ) {
+    private val logger = LoggerFactory.getLogger(NotificationService::class.java)
 
     /**
      * Send a notification to all staff members about a new booking.
@@ -39,6 +41,8 @@ class NotificationService(
 
         staffMembers.forEach { staffMember ->
             try {
+                logger.info("Sending notification to staff member with chat ID: {}", staffMember.chatId)
+
                 bot.sendMessage(
                     chatId = ChatId.fromId(staffMember.chatId.toLong()),
                     text = message,
@@ -46,7 +50,7 @@ class NotificationService(
                 )
             } catch (e: Exception) {
                 // Log the error but continue with other staff members
-                println("Failed to send notification to staff member ${staffMember.username}: ${e.message}")
+                logger.error("Failed to send notification to staff member ${staffMember.username}: ${e.message}")
             }
         }
     }

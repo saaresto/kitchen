@@ -5,6 +5,7 @@ import com.saaresto.kitchen.kitchenadmin.model.BookingStatus
 import com.saaresto.kitchen.kitchenadmin.model.Visitor
 import com.saaresto.kitchen.kitchenadmin.repository.BookingRepository
 import com.saaresto.kitchen.kitchenadmin.repository.VisitorRepository
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -17,6 +18,7 @@ class BookingService(
     private val visitorRepository: VisitorRepository,
     private val notificationService: NotificationService
 ) {
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     /**
      * Get all bookings.
@@ -88,6 +90,7 @@ class BookingService(
 
         // Send notification to staff members if booking is pending
         if (savedBooking.status == BookingStatus.PENDING) {
+            logger.info("Sending notification for pending booking: ${savedBooking.id}")
             notificationService.sendBookingNotification(savedBooking)
         }
 
