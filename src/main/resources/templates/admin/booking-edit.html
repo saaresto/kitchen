@@ -53,6 +53,7 @@
                                 <select class="form-select" id="status" name="status">
                                     <option value="PENDING" th:selected="${booking.status.name() == 'PENDING'}">Pending</option>
                                     <option value="WAIT_LIST" th:selected="${booking.status.name() == 'WAIT_LIST'}">Wait List</option>
+                                    <option value="CALL_AGAIN" th:selected="${booking.status.name() == 'CALL_AGAIN'}">Call Again</option>
                                     <option value="CONFIRMED" th:selected="${booking.status.name() == 'CONFIRMED'}">Confirmed</option>
                                     <option value="DECLINED" th:selected="${booking.status.name() == 'DECLINED'}">Declined</option>
                                 </select>

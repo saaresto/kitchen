@@ -43,7 +43,7 @@ class AdminBookingController(private val bookingService: BookingService) {
                 val startOfDay = filterDate.atStartOfDay()
                 val endOfDay = filterDate.plusDays(1).atStartOfDay()
                 bookingService.getAllBookings().filter { 
-                    (it.status == BookingStatus.PENDING || it.status == BookingStatus.WAIT_LIST) && 
+                    (it.status == BookingStatus.PENDING || it.status == BookingStatus.WAIT_LIST || it.status == BookingStatus.CALL_AGAIN) && 
                     it.dateTime >= startOfDay && 
                     it.dateTime < endOfDay 
                 }
@@ -52,7 +52,11 @@ class AdminBookingController(private val bookingService: BookingService) {
                 bookingService.getPendingBookingsOrderByCreatedAt()
             }
 
+            // Group bookings by status
+            val groupedBookings = pendingBookings.groupBy { it.status }
+
             model.addAttribute("pendingBookings", pendingBookings)
+            model.addAttribute("groupedBookings", groupedBookings)
             model.addAttribute("filterDate", filterDate)
         }
 
@@ -258,6 +262,22 @@ class AdminBookingController(private val bookingService: BookingService) {
             redirectAttributes.addFlashAttribute("messageType", "success")
         } catch (e: Exception) {
             redirectAttributes.addFlashAttribute("message", "Error moving booking to wait list: ${e.message}")
+            redirectAttributes.addFlashAttribute("messageType", "danger")
+        }
+        return "redirect:/admin/bookings?tab=pending"
+    }
+
+    @PostMapping("/{id}/callagain")
+    fun callAgainBooking(
+        @PathVariable id: UUID, 
+        redirectAttributes: RedirectAttributes
+    ): String {
+        try {
+            bookingService.callAgainBooking(id)
+            redirectAttributes.addFlashAttribute("message", "Booking moved to call again status successfully")
+            redirectAttributes.addFlashAttribute("messageType", "success")
+        } catch (e: Exception) {
+            redirectAttributes.addFlashAttribute("message", "Error moving booking to call again status: ${e.message}")
             redirectAttributes.addFlashAttribute("messageType", "danger")
         }
         return "redirect:/admin/bookings?tab=pending"

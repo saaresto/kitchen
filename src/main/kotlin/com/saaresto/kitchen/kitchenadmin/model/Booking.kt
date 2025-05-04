@@ -10,7 +10,8 @@ enum class BookingStatus {
     PENDING,
     CONFIRMED,
     DECLINED,
-    WAIT_LIST
+    WAIT_LIST,
+    CALL_AGAIN
 }
 
 /**
