@@ -16,7 +16,7 @@ object BookingTable : UUIDTable("bookings") {
     val mainVisitorPhone: Column<String> = varchar("main_visitor_phone", 20)
     val visitorsCount: Column<Int> = integer("visitors_count")
     val dateTime: Column<LocalDateTime> = datetime("date_time")
-    val tableId: Column<Int> = integer("table_id")
+    val tableId: Column<String> = varchar("table_id", 50)
     val notes: Column<String?> = text("notes").nullable()
     val createdAt: Column<LocalDateTime> = datetime("created_at")
 }

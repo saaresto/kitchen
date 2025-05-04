@@ -25,7 +25,7 @@ class BookingFormController(private val bookingService: BookingService) {
                 mainVisitorPhone = "",
                 visitorsCount = 1,
                 dateTime = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0),
-                tableId = 1,
+                tableId = "1",
                 notes = ""
             ))
         }
@@ -42,33 +42,36 @@ class BookingFormController(private val bookingService: BookingService) {
         if (bookingRequest.mainVisitorName.isBlank()) {
             bindingResult.rejectValue("mainVisitorName", "error.mainVisitorName", "Name is required")
         }
-        
+
         if (bookingRequest.mainVisitorPhone.isBlank()) {
             bindingResult.rejectValue("mainVisitorPhone", "error.mainVisitorPhone", "Phone number is required")
         }
-        
+
         if (bookingRequest.visitorsCount < 1) {
             bindingResult.rejectValue("visitorsCount", "error.visitorsCount", "Number of guests must be at least 1")
         }
-        
+
         if (bindingResult.hasErrors()) {
             return "booking-form"
         }
-        
+
         try {
+            // Normalize phone number by removing all non-digit characters
+            val normalizedPhone = bookingRequest.mainVisitorPhone.replace(Regex("[^0-9]"), "")
+
             val booking = Booking(
                 mainVisitorName = bookingRequest.mainVisitorName,
-                mainVisitorPhone = bookingRequest.mainVisitorPhone,
+                mainVisitorPhone = normalizedPhone,
                 visitorsCount = bookingRequest.visitorsCount,
                 dateTime = bookingRequest.dateTime,
-                tableId = bookingRequest.tableId ?: -1,
+                tableId = bookingRequest.tableId ?: "-1",
                 notes = bookingRequest.notes
             )
-            
+
             bookingService.createBooking(booking)
             redirectAttributes.addFlashAttribute("success", true)
             return "redirect:/bookings/create"
-            
+
         } catch (e: IllegalArgumentException) {
             redirectAttributes.addFlashAttribute("error", e.message)
             redirectAttributes.addFlashAttribute("bookingRequest", bookingRequest)

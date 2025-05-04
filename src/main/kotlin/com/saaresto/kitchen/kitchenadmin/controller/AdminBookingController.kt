@@ -27,7 +27,9 @@ class AdminBookingController(private val bookingService: BookingService) {
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) startDate: LocalDate?,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endDate: LocalDate?,
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(required = false) tableId: Int?,
+        @RequestParam(required = false) tableId: String?,
+        @RequestParam(required = false) visitorName: String?,
+        @RequestParam(required = false) visitorPhone: String?,
         model: Model
     ): String {
         // Set active tab
@@ -56,7 +58,8 @@ class AdminBookingController(private val bookingService: BookingService) {
 
         // Load data for today's bookings tab
         if (tab == "today" || tab == "all") {
-            val todayBookings = bookingService.getTodayBookings()
+            // Get today's bookings with filters
+            val todayBookings = bookingService.getTodayBookingsWithFilters(visitorName, visitorPhone)
 
             // Filter by table ID if provided
             val filteredBookings = if (tableId != null) {
@@ -67,6 +70,8 @@ class AdminBookingController(private val bookingService: BookingService) {
 
             model.addAttribute("todayBookings", filteredBookings)
             model.addAttribute("tableId", tableId)
+            model.addAttribute("visitorName", visitorName)
+            model.addAttribute("visitorPhone", visitorPhone)
         }
 
         // Load data for booking history tab
@@ -74,11 +79,13 @@ class AdminBookingController(private val bookingService: BookingService) {
             val start = startDate ?: LocalDate.now().minusMonths(1)
             val end = endDate ?: LocalDate.now()
 
-            // Get all bookings in the date range
-            val allBookings = bookingService.getAllBookings().filter {
-                val bookingDate = it.dateTime.toLocalDate()
-                bookingDate >= start && bookingDate <= end
-            }.sortedByDescending { it.dateTime }
+            // Get all bookings in the date range with filters
+            val allBookings = bookingService.getBookingsByDateRangeWithFilters(
+                start.atStartOfDay(),
+                end.atStartOfDay(),
+                visitorName,
+                visitorPhone
+            )
 
             // Simple pagination
             val pageSize = 10
@@ -91,6 +98,8 @@ class AdminBookingController(private val bookingService: BookingService) {
             model.addAttribute("endDate", end)
             model.addAttribute("currentPage", currentPage)
             model.addAttribute("totalPages", totalPages)
+            model.addAttribute("visitorName", visitorName)
+            model.addAttribute("visitorPhone", visitorPhone)
         }
 
         model.addAttribute("content", "admin/bookings :: content")
@@ -107,7 +116,7 @@ class AdminBookingController(private val bookingService: BookingService) {
     }
 
     @GetMapping("/today")
-    fun todayBookings(@RequestParam(required = false) tableId: Int?): String {
+    fun todayBookings(@RequestParam(required = false) tableId: String?): String {
         return "redirect:/admin/bookings?tab=today" + (tableId?.let { "&tableId=$it" } ?: "")
     }
 
@@ -178,15 +187,18 @@ class AdminBookingController(private val bookingService: BookingService) {
             // Get existing booking to preserve ID
             val existingBooking = bookingService.getBookingById(id)
 
+            // Normalize phone number by removing all non-digit characters
+            val normalizedPhone = bookingRequest.mainVisitorPhone.replace(Regex("[^0-9]"), "")
+
             // Create updated booking
             val booking = Booking(
                 id = id,
                 status = BookingStatus.valueOf(status),
                 mainVisitorName = bookingRequest.mainVisitorName,
-                mainVisitorPhone = bookingRequest.mainVisitorPhone,
+                mainVisitorPhone = normalizedPhone,
                 visitorsCount = bookingRequest.visitorsCount,
                 dateTime = bookingRequest.dateTime,
-                tableId = bookingRequest.tableId ?: -1,
+                tableId = bookingRequest.tableId ?: "-1",
                 notes = bookingRequest.notes,
                 createdAt = existingBooking.createdAt.minusHours(5)  // Preserve the original createdAt date
             )

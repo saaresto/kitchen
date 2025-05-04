@@ -15,7 +15,7 @@ data class BookingRequest(
     val mainVisitorPhone: String,
     val visitorsCount: Int,
     @DateTimeFormat(pattern = "dd.MM.yyyy, HH:mm") val dateTime: LocalDateTime,
-    val tableId: Int? = 0,
+    val tableId: String? = "0",
     val notes: String? = null
 )
 
@@ -29,7 +29,7 @@ data class BookingResponse(
     val mainVisitorPhone: String,
     val visitorsCount: Int,
     val dateTime: LocalDateTime,
-    val tableId: Int,
+    val tableId: String,
     val notes: String?,
     val createdAt: LocalDateTime
 ) {

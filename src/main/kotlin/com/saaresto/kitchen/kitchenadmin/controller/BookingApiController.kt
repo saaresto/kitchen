@@ -49,12 +49,15 @@ class BookingApiController(private val bookingService: BookingService) {
     @PostMapping
     fun createBooking(@RequestBody request: BookingRequest): ResponseEntity<Any> {
         return try {
+            // Normalize phone number by removing all non-digit characters
+            val normalizedPhone = request.mainVisitorPhone.replace(Regex("[^0-9]"), "")
+
             val booking = Booking(
                 mainVisitorName = request.mainVisitorName,
-                mainVisitorPhone = request.mainVisitorPhone,
+                mainVisitorPhone = normalizedPhone,
                 visitorsCount = request.visitorsCount,
                 dateTime = request.dateTime,
-                tableId = request.tableId ?: -1,
+                tableId = request.tableId ?: "-1",
                 notes = request.notes
             )
             val createdBooking = bookingService.createBooking(booking)
@@ -71,14 +74,17 @@ class BookingApiController(private val bookingService: BookingService) {
         @RequestBody request: BookingRequest
     ): ResponseEntity<Any> {
         return try {
+            // Normalize phone number by removing all non-digit characters
+            val normalizedPhone = request.mainVisitorPhone.replace(Regex("[^0-9]"), "")
+
             val booking = Booking(
                 id = id,
                 status = bookingService.getBookingById(id).status, // Preserve existing status
                 mainVisitorName = request.mainVisitorName,
-                mainVisitorPhone = request.mainVisitorPhone,
+                mainVisitorPhone = normalizedPhone,
                 visitorsCount = request.visitorsCount,
                 dateTime = request.dateTime,
-                tableId = request.tableId ?: -1,
+                tableId = request.tableId ?: "-1",
                 notes = request.notes
             )
             val updatedBooking = bookingService.updateBooking(id, booking)

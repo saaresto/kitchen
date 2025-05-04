@@ -22,7 +22,7 @@ data class Booking(
     val mainVisitorPhone: String,
     val visitorsCount: Int,
     val dateTime: LocalDateTime,
-    val tableId: Int,
+    val tableId: String,
     val notes: String? = null,
     val createdAt: LocalDateTime = LocalDateTime.now()
 )

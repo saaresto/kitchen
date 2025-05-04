@@ -5,6 +5,7 @@ import com.saaresto.kitchen.kitchenadmin.model.Booking
 import com.saaresto.kitchen.kitchenadmin.model.BookingStatus
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
@@ -61,6 +62,60 @@ class BookingRepository {
                 (BookingTable.dateTime greaterEq startOfDay) and
                 (BookingTable.dateTime less endOfDay)
             }
+            .map { it.toBooking() }
+    }
+
+    /**
+     * Find bookings for a specific date with optional visitor name and phone filters.
+     */
+    fun findByDateAndFilters(date: LocalDateTime, visitorName: String? = null, visitorPhone: String? = null): List<Booking> = transaction {
+        val startOfDay = date.toLocalDate().atStartOfDay()
+        val endOfDay = startOfDay.plusDays(1)
+
+        var query = BookingTable.selectAll()
+            .where { 
+                (BookingTable.dateTime greaterEq startOfDay) and
+                (BookingTable.dateTime less endOfDay)
+            }
+
+        if (!visitorName.isNullOrBlank()) {
+            query = query.andWhere { BookingTable.mainVisitorName.lowerCase() like "%${visitorName.lowercase()}%" }
+        }
+
+        if (!visitorPhone.isNullOrBlank()) {
+            query = query.andWhere { BookingTable.mainVisitorPhone like "%${visitorPhone}%" }
+        }
+
+        query.map { it.toBooking() }
+    }
+
+    /**
+     * Find bookings within a date range with optional visitor name and phone filters.
+     */
+    fun findByDateRangeAndFilters(
+        startDate: LocalDateTime, 
+        endDate: LocalDateTime, 
+        visitorName: String? = null, 
+        visitorPhone: String? = null
+    ): List<Booking> = transaction {
+        val startOfDay = startDate.toLocalDate().atStartOfDay()
+        val endOfDay = endDate.toLocalDate().plusDays(1).atStartOfDay()
+
+        var query = BookingTable.selectAll()
+            .where { 
+                (BookingTable.dateTime greaterEq startOfDay) and
+                (BookingTable.dateTime less endOfDay)
+            }
+
+        if (!visitorName.isNullOrBlank()) {
+            query = query.andWhere { BookingTable.mainVisitorName.lowerCase() like "%${visitorName.lowercase()}%" }
+        }
+
+        if (!visitorPhone.isNullOrBlank()) {
+            query = query.andWhere { BookingTable.mainVisitorPhone like "%${visitorPhone}%" }
+        }
+
+        query.orderBy(BookingTable.createdAt to SortOrder.DESC)
             .map { it.toBooking() }
     }
 

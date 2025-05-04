@@ -49,6 +49,24 @@ class BookingService(
         bookingRepository.findByDate(LocalDateTime.now()).filter { it.status == BookingStatus.CONFIRMED }
 
     /**
+     * Get bookings for today with optional visitor name and phone filters.
+     */
+    fun getTodayBookingsWithFilters(visitorName: String? = null, visitorPhone: String? = null): List<Booking> =
+        bookingRepository.findByDateAndFilters(LocalDateTime.now(), visitorName, visitorPhone)
+            .filter { it.status == BookingStatus.CONFIRMED }
+
+    /**
+     * Get bookings within a date range with optional visitor name and phone filters.
+     */
+    fun getBookingsByDateRangeWithFilters(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+        visitorName: String? = null,
+        visitorPhone: String? = null
+    ): List<Booking> =
+        bookingRepository.findByDateRangeAndFilters(startDate, endDate, visitorName, visitorPhone)
+
+    /**
      * Create a new booking.
      * @throws IllegalArgumentException if booking time is invalid
      */

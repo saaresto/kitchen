@@ -106,7 +106,7 @@ class BookingTimeValidationTest {
             mainVisitorPhone = "+1234567890",
             visitorsCount = 4,
             dateTime = dateTime,
-            tableId = 5,
+            tableId = "5",
             notes = "Test booking"
         )
     }
