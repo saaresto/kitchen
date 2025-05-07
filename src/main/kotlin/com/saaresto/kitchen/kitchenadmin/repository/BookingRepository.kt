@@ -184,6 +184,7 @@ class BookingRepository {
         tableId = this[BookingTable.tableId],
         notes = this[BookingTable.notes],
 //        createdAt = this[BookingTable.createdAt].atZone(ZoneId.ofOffset("UTC", ZoneOffset.ofHours(5))).toLocalDateTime()
-        createdAt = this[BookingTable.createdAt].plusHours(5)
+//        createdAt = this[BookingTable.createdAt].plusHours(5)
+        createdAt = this[BookingTable.createdAt]
     )
 }
