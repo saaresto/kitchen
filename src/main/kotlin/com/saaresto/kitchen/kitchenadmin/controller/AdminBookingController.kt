@@ -204,7 +204,8 @@ class AdminBookingController(private val bookingService: BookingService) {
                 dateTime = bookingRequest.dateTime,
                 tableId = bookingRequest.tableId ?: "-1",
                 notes = bookingRequest.notes,
-                createdAt = existingBooking.createdAt.minusHours(5)  // Preserve the original createdAt date
+//                createdAt = existingBooking.createdAt.minusHours(5)  // Preserve the original createdAt date
+                createdAt = existingBooking.createdAt  // Preserve the original createdAt date
             )
 
             bookingService.updateBooking(id, booking)
