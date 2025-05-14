@@ -56,8 +56,14 @@ class BookingFormController(private val bookingService: BookingService) {
         }
 
         try {
-            // Normalize phone number by removing all non-digit characters
-            val normalizedPhone = bookingRequest.mainVisitorPhone.replace(Regex("[^0-9]"), "")
+            // Normalize phone number to format 87771112233
+            val digitsOnly = bookingRequest.mainVisitorPhone.replace(Regex("[^0-9]"), "")
+            val normalizedPhone = when {
+                digitsOnly.length == 10 -> "8$digitsOnly"
+                digitsOnly.length == 11 && digitsOnly.startsWith("7") -> "8${digitsOnly.substring(1)}"
+                digitsOnly.length == 11 && digitsOnly.startsWith("8") -> digitsOnly
+                else -> digitsOnly // Keep as is for other cases
+            }
 
             val booking = Booking(
                 mainVisitorName = bookingRequest.mainVisitorName,

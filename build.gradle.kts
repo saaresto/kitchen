@@ -47,6 +47,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.h2database:h2")
+    testImplementation("org.mockito:mockito-core:5.12.0") // or latest
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1") // Kotlin-friendly API
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
