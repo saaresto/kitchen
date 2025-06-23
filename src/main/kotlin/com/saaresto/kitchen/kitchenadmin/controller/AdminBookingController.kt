@@ -73,7 +73,7 @@ class AdminBookingController(private val bookingService: BookingService) {
             )
 
             // Filter by table ID if provided
-            val filteredBookings = if (tableId != null) {
+            val filteredBookings = if (!tableId.isNullOrBlank()) {
                 bookings.filter { it.tableId == tableId }
             } else {
                 bookings
