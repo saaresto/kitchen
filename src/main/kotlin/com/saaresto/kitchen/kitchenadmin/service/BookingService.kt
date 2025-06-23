@@ -59,6 +59,13 @@ class BookingService(
             .filter { it.status == BookingStatus.CONFIRMED }
 
     /**
+     * Get bookings for a specific date with optional visitor name and phone filters.
+     */
+    fun getBookingsByDateWithFilters(date: LocalDateTime, visitorName: String? = null, visitorPhone: String? = null): List<Booking> =
+        bookingRepository.findByDateAndFilters(date, visitorName, visitorPhone)
+            .filter { it.status == BookingStatus.CONFIRMED }
+
+    /**
      * Get bookings within a date range with optional visitor name and phone filters.
      */
     fun getBookingsByDateRangeWithFilters(

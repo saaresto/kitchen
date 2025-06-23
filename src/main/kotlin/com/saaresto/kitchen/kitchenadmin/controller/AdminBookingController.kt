@@ -62,17 +62,25 @@ class AdminBookingController(private val bookingService: BookingService) {
 
         // Load data for today's bookings tab
         if (tab == "today" || tab == "all") {
-            // Get today's bookings with filters
-            val todayBookings = bookingService.getTodayBookingsWithFilters(visitorName, visitorPhone)
+            // Use the provided date or default to today
+            val filterDate = date ?: LocalDate.now()
+
+            // Get bookings for the specified date with filters
+            val bookings = bookingService.getBookingsByDateWithFilters(
+                filterDate.atStartOfDay(),
+                visitorName,
+                visitorPhone
+            )
 
             // Filter by table ID if provided
             val filteredBookings = if (tableId != null) {
-                todayBookings.filter { it.tableId == tableId }
+                bookings.filter { it.tableId == tableId }
             } else {
-                todayBookings
+                bookings
             }
 
             model.addAttribute("todayBookings", filteredBookings)
+            model.addAttribute("filterDate", filterDate)
             model.addAttribute("tableId", tableId)
             model.addAttribute("visitorName", visitorName)
             model.addAttribute("visitorPhone", visitorPhone)

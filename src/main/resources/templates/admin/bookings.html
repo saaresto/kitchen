@@ -271,7 +271,7 @@
                 </div>
             </div>
 
-            <!-- Today's Bookings Tab -->
+            <!-- Bookings by Date Tab (formerly Today's Bookings) -->
             <div class="tab-pane fade" th:classappend="${activeTab == 'today' ? 'show active' : ''}" 
                  id="today" role="tabpanel" aria-labelledby="today-tab">
 
@@ -279,6 +279,14 @@
                     <div class="col-md-12">
                         <form th:action="@{/admin/bookings}" method="get" class="d-flex flex-wrap gap-2">
                             <input type="hidden" name="tab" value="today">
+                            <div class="input-group me-2">
+                                <span class="input-group-text">Date</span>
+                                <input type="text" class="form-control" name="date" th:value="${filterDate != null ? #temporals.format(filterDate, 'yyyy-MM-dd') : ''}" data-flatpickr="date" />
+                            </div>
+                            <div class="btn-group me-2">
+                                <a th:href="@{/admin/bookings(tab='today', date=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}, tableId=${tableId}, visitorName=${visitorName}, visitorPhone=${visitorPhone})}" class="btn btn-outline-primary">Today</a>
+                                <a th:href="@{/admin/bookings(tab='today', date=${#temporals.format(#temporals.createNow().plusDays(1), 'yyyy-MM-dd')}, tableId=${tableId}, visitorName=${visitorName}, visitorPhone=${visitorPhone})}" class="btn btn-outline-primary">Tomorrow</a>
+                            </div>
                             <div class="input-group me-2">
                                 <span class="input-group-text">Table ID</span>
                                 <input type="text" class="form-control" name="tableId" th:value="${tableId}" />
