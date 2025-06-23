@@ -55,7 +55,7 @@ class SecurityConfig {
                 it.permitAll()
             }
             .rememberMe {
-                it.tokenValiditySeconds(86400)
+                it.tokenValiditySeconds(60 * 60 * 24 * 30)
             }
             .logout {
                 it.logoutSuccessUrl("/login?logout")

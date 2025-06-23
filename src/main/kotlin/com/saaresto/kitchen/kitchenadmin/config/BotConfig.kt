@@ -25,26 +25,28 @@ class BotConfig {
             dispatch {
                 text {
                     if (message.text != null && message.text!!.contains("@")) {
-                        val username = message.text!!.split("@").first()
-                        val pwd = message.text!!.split("@").last()
-                        if (pwd.equals("makaroshk1")) {
-                            staffService.createStaffMember(
-                                username = message.from?.username ?: username,
-                                message.chat.id.toString()
-                            )
-                            bot.sendMessage(
-                                chatId = ChatId.fromId(message.chat.id),
-                                text = "Vamos, $username!",
-                                protectContent = true,
-                                disableNotification = false,
-                            )
-                        } else {
-                            bot.sendMessage(
-                                chatId = ChatId.fromId(message.chat.id),
-                                text = "Sorry po",
-                                protectContent = true,
-                                disableNotification = false,
-                            )
+                        if (message.text!!.split("@").size == 2) {
+                            val username = message.text!!.split("@").first()
+                            val pwd = message.text!!.split("@").last()
+                            if (pwd.equals("makaroshk1")) {
+                                staffService.createStaffMember(
+                                    username = message.from?.username ?: username,
+                                    message.chat.id.toString()
+                                )
+                                bot.sendMessage(
+                                    chatId = ChatId.fromId(message.chat.id),
+                                    text = "Vamos, $username!",
+                                    protectContent = true,
+                                    disableNotification = false,
+                                )
+                            } else {
+                                bot.sendMessage(
+                                    chatId = ChatId.fromId(message.chat.id),
+                                    text = "Sorry po",
+                                    protectContent = true,
+                                    disableNotification = false,
+                                )
+                            }
                         }
                     }
                 }
