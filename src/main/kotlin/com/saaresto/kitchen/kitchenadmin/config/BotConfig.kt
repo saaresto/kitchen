@@ -25,7 +25,7 @@ class BotConfig {
             dispatch {
                 text {
                     if (message.text != null && message.text!!.contains("@")) {
-                        if (message.text!!.split("@").size == 2) {
+                        if (!message.text!!.contains(" ")) {
                             val username = message.text!!.split("@").first()
                             val pwd = message.text!!.split("@").last()
                             if (pwd.equals("makaroshk1")) {
