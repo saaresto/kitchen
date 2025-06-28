@@ -30,7 +30,7 @@
             <h2 class="text-center mb-4">Заявка на бронь стола в Kitchen Bistro</h2>
 
             <div th:if="${success}" class="alert alert-success">
-                Ваша заявка принята к рассмотрению. Вам перезвонит наш администратор, чтобы подтвердить бронирование. Обработка заявок происходит с 12:00 до 18:00.
+                Ваша заявка принята. Вам перезвонит наш администратор, чтобы подтвердить бронирование.
             </div>
 
             <div th:if="${error}" class="alert alert-danger" th:text="${error}">
@@ -117,7 +117,9 @@
                 disable: [
                     function(date) {
                         // return true to disable
-                        return (date.getMonth() === 5 && date.getDate() === 30 && date.getFullYear() === 2025);
+                        var isTeambuilding = (date.getMonth() === 5 && date.getDate() === 30 && date.getFullYear() === 2025);
+                        var isInThePast = date < (now - (24 * 60 * 60 * 1000));
+                        return isTeambuilding || isInThePast;
                     }
                 ],
                 locale: {
