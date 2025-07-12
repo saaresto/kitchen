@@ -117,7 +117,7 @@
                 disable: [
                     function(date) {
                         // return true to disable
-                        var isTeambuilding = (date.getMonth() === 5 && date.getDate() === 30 && date.getFullYear() === 2025);
+                        var isTeambuilding = (date.getMonth() === 6 && date.getDate() === 16 && date.getFullYear() === 2025);
                         var isInThePast = date < (now - (24 * 60 * 60 * 1000));
                         return isTeambuilding || isInThePast;
                     }
