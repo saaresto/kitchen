@@ -30,6 +30,15 @@ class VisitorRepository {
     }
 
     /**
+     * Find a visitor by phone number.
+     */
+    fun findByPhoneNumber(phoneNumber: String): Visitor? = transaction {
+        VisitorTable.selectAll().where { VisitorTable.phoneNumber eq phoneNumber }
+            .map { it.toVisitor() }
+            .singleOrNull()
+    }
+
+    /**
      * Save a new visitor or update an existing one.
      */
     fun save(visitor: Visitor): Visitor = transaction {

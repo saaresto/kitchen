@@ -15,7 +15,7 @@ import java.util.UUID
 @Service
 class BookingService(
     private val bookingRepository: BookingRepository,
-    private val visitorRepository: VisitorRepository,
+    private val visitorRepository: VisitorService,
     private val notificationService: NotificationService
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -93,7 +93,7 @@ class BookingService(
             name = booking.mainVisitorName,
             notes = "Created at ${booking.dateTime.format(DateTimeFormatter.ISO_DATE_TIME)} from booking ${booking.id}"
         )
-        visitorRepository.save(visitor)
+        visitorRepository.createVisitor(visitor)
 
         // Send notification to staff members if booking is pending
         if (savedBooking.status == BookingStatus.PENDING) {

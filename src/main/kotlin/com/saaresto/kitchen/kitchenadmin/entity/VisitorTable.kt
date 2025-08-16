@@ -8,7 +8,7 @@ import java.util.UUID
  * Exposed table definition for the Visitor entity.
  */
 object VisitorTable : UUIDTable("visitors") {
-    val phoneNumber: Column<String> = varchar("phone_number", 20)
+    val phoneNumber: Column<String> = varchar("phone_number", 20).uniqueIndex()
     val name: Column<String> = varchar("name", 255)
     val notes: Column<String?> = varchar("notes", 1000).nullable()
 }
