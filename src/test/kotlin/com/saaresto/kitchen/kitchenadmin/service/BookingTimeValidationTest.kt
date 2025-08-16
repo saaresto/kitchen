@@ -3,12 +3,11 @@ package com.saaresto.kitchen.kitchenadmin.service
 import com.saaresto.kitchen.kitchenadmin.model.Booking
 import com.saaresto.kitchen.kitchenadmin.model.BookingStatus
 import com.saaresto.kitchen.kitchenadmin.repository.BookingRepository
-import com.saaresto.kitchen.kitchenadmin.repository.VisitorRepository
+import com.saaresto.kitchen.kitchenadmin.service.VisitorService
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import java.time.LocalDateTime
 import java.util.UUID
@@ -16,14 +15,14 @@ import java.util.UUID
 class BookingTimeValidationTest {
 
     private lateinit var bookingRepository: BookingRepository
-    private lateinit var visitorRepository: VisitorRepository
+    private lateinit var visitorRepository: VisitorService
     private lateinit var notificationService: NotificationService
     private lateinit var bookingService: BookingService
 
     @BeforeEach
     fun setUp() {
         bookingRepository = mock(BookingRepository::class.java)
-        visitorRepository = mock(VisitorRepository::class.java)
+        visitorRepository = mock(VisitorService::class.java)
         notificationService = mock(NotificationService::class.java)
         bookingService = BookingService(bookingRepository, visitorRepository, notificationService)
     }

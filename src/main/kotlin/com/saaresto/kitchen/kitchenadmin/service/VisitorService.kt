@@ -4,6 +4,7 @@ import com.saaresto.kitchen.kitchenadmin.model.Visitor
 import com.saaresto.kitchen.kitchenadmin.repository.VisitorRepository
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Service
@@ -59,5 +60,32 @@ class VisitorService(private val visitorRepository: VisitorRepository) {
         if (!visitorRepository.deleteById(id)) {
             throw NoSuchElementException("Visitor with ID $id not found")
         }
+    }
+
+    /**
+     * Get visitors with confirmed bookings, including the count of confirmed bookings for each visitor.
+     * @param page The page number (0-based)
+     * @param pageSize The number of items per page
+     * @return A list of visitors with confirmed bookings, with the count of confirmed bookings for each visitor
+     */
+    fun getVisitorsWithConfirmedBookings(page: Int = 0, pageSize: Int = 20): List<Pair<Visitor, Int>> {
+        return visitorRepository.findVisitorsWithConfirmedBookings(page, pageSize)
+    }
+
+    /**
+     * Get the total number of visitors with confirmed bookings.
+     * @return The total count of visitors with confirmed bookings
+     */
+    fun countVisitorsWithConfirmedBookings(): Int {
+        return visitorRepository.countVisitorsWithConfirmedBookings()
+    }
+
+    /**
+     * Get confirmed bookings for a specific visitor by phone number.
+     * @param phoneNumber The visitor's phone number
+     * @return A list of booking date/times and visitor counts
+     */
+    fun getConfirmedBookingsForVisitor(phoneNumber: String): List<Pair<LocalDateTime, Int>> {
+        return visitorRepository.findConfirmedBookingsForVisitor(phoneNumber)
     }
 }

@@ -110,6 +110,10 @@
                    th:href="@{/admin/bookings(tab='history')}">
                     <i class="bi bi-clock-history me-2"></i> Booking History
                 </a>
+                <a class="nav-link py-2" th:classappend="${activeTab == 'guests' ? 'active' : ''}"
+                   th:href="@{/admin/guests}">
+                    <i class="bi bi-people me-2"></i> Guest List
+                </a>
                 <hr>
                 <a class="nav-link py-2" href="/logout">
                     <i class="bi bi-box-arrow-right me-2"></i> Logout
@@ -129,6 +133,9 @@
             </div>
             <div th:if="${content == 'admin/booking-edit :: content'}">
                 <div th:replace="~{admin/booking-edit :: content}"></div>
+            </div>
+            <div th:if="${content == 'admin/guests :: content'}">
+                <div th:replace="~{admin/guests :: content}"></div>
             </div>
             <div th:if="${content == null}">Page content goes here</div>
         </div>

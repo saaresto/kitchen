@@ -1,0 +1,170 @@
+<div th:fragment="content">
+    <h1 class="mb-4">Guest List</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Visitors with Confirmed Bookings</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${visitors != null && #lists.isEmpty(visitors)}" class="alert alert-info">
+                        No visitors with confirmed bookings found.
+                    </div>
+                    
+                    <div class="table-responsive" th:if="${visitors != null && !#lists.isEmpty(visitors)}">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Phone Number</th>
+                                    <th>Visitor Name</th>
+                                    <th>Confirmed Bookings Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="visitorData : ${visitors}" class="visitor-row" th:data-phone="${visitorData.first.phoneNumber}">
+                                    <td th:text="${visitorData.first.phoneNumber}">+1234567890</td>
+                                    <td th:text="${visitorData.first.name}">John Doe</td>
+                                    <td th:text="${visitorData.second}">3</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <nav th:if="${totalPages != null && totalPages > 1}">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                <a class="page-link" th:href="@{/admin/guests(page=${currentPage - 1})}">Previous</a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active'">
+                                <a class="page-link" th:href="@{/admin/guests(page=${i})}" th:text="${i + 1}">1</a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                <a class="page-link" th:href="@{/admin/guests(page=${currentPage + 1})}">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Visitor Bookings Modal -->
+    <div class="modal fade" id="visitorBookingsModal" tabindex="-1" aria-labelledby="visitorBookingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="visitorBookingsModalLabel">Visitor Bookings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="bookingsLoading" class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <div id="bookingsContent" style="display: none;">
+                        <h6 id="visitorName"></h6>
+                        <p id="visitorPhone"></p>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Booking Date and Time</th>
+                                        <th>Booking Visitors Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookingsTableBody">
+                                    <!-- Bookings will be loaded here via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript for handling visitor row clicks and loading bookings -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click event to visitor rows
+            const visitorRows = document.querySelectorAll('.visitor-row');
+            visitorRows.forEach(row => {
+                row.addEventListener('click', function() {
+                    const phoneNumber = this.getAttribute('data-phone');
+                    const visitorName = this.cells[1].textContent;
+                    
+                    // Show modal
+                    const modal = new bootstrap.Modal(document.getElementById('visitorBookingsModal'));
+                    modal.show();
+                    
+                    // Set visitor info
+                    document.getElementById('visitorName').textContent = visitorName;
+                    document.getElementById('visitorPhone').textContent = phoneNumber;
+                    
+                    // Show loading spinner
+                    document.getElementById('bookingsLoading').style.display = 'block';
+                    document.getElementById('bookingsContent').style.display = 'none';
+                    
+                    // Fetch bookings data
+                    fetch(`/admin/guests/bookings?phoneNumber=${encodeURIComponent(phoneNumber)}`)
+                        .then(response => response.json())
+                        .then(bookings => {
+                            // Hide loading spinner
+                            document.getElementById('bookingsLoading').style.display = 'none';
+                            document.getElementById('bookingsContent').style.display = 'block';
+                            
+                            // Clear previous bookings
+                            const tableBody = document.getElementById('bookingsTableBody');
+                            tableBody.innerHTML = '';
+                            
+                            // Add bookings to table
+                            if (bookings.length === 0) {
+                                const row = document.createElement('tr');
+                                const cell = document.createElement('td');
+                                cell.setAttribute('colspan', '2');
+                                cell.textContent = 'No bookings found';
+                                row.appendChild(cell);
+                                tableBody.appendChild(row);
+                            } else {
+                                bookings.forEach(booking => {
+                                    const row = document.createElement('tr');
+                                    
+                                    const dateTimeCell = document.createElement('td');
+                                    dateTimeCell.textContent = booking.dateTime;
+                                    row.appendChild(dateTimeCell);
+                                    
+                                    const visitorCountCell = document.createElement('td');
+                                    visitorCountCell.textContent = booking.visitorCount;
+                                    row.appendChild(visitorCountCell);
+                                    
+                                    tableBody.appendChild(row);
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching bookings:', error);
+                            document.getElementById('bookingsLoading').style.display = 'none';
+                            document.getElementById('bookingsContent').style.display = 'block';
+                            
+                            const tableBody = document.getElementById('bookingsTableBody');
+                            tableBody.innerHTML = '';
+                            
+                            const row = document.createElement('tr');
+                            const cell = document.createElement('td');
+                            cell.setAttribute('colspan', '2');
+                            cell.textContent = 'Error loading bookings';
+                            row.appendChild(cell);
+                            tableBody.appendChild(row);
+                        });
+                });
+            });
+        });
+    </script>
+</div>
