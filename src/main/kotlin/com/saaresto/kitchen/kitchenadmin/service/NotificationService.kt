@@ -32,7 +32,14 @@ class NotificationService(
             🔔 *New Booking Alert!* 🔔
 
             👤 *Visitor:* ${booking.mainVisitorName}
-            📱 *Phone:* ${booking.mainVisitorPhone}
+            📱 *Phone:* ${
+            booking.mainVisitorPhone.let { phone ->
+                if (phone.startsWith("+")) phone else if (phone.startsWith(
+                        "8"
+                    )
+                ) "+7${phone.substring(1)}" else phone
+            }
+        }
             📅 *Date:* ${booking.dateTime.format(dateFormatter)}
             🕒 *Time:* ${booking.dateTime.format(timeFormatter)}
             👥 *Guests:* ${booking.visitorsCount}
