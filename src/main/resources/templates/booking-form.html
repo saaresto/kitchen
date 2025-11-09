@@ -101,13 +101,13 @@
 
             var now = new Date()
             now.setMinutes(0,0,0);
-            now.setHours(now.getHours() + 2);
+            now.setHours(now.getHours() + 3);
             // Initialize date-time pickers
             flatpickr("input[data-flatpickr='datetime']", {
                 defaultDate: now,
                 altInput: true,
                 altFormat: "F j, Y, H:i",
-                minTime: "14:30",
+                minTime: "12:00",
                 maxTime: "22:30",
                 enableTime: true,
                 dateFormat: "Y-m-d\\TH:i:S",
