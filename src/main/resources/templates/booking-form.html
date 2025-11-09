@@ -107,7 +107,7 @@
                 defaultDate: now,
                 altInput: true,
                 altFormat: "F j, Y, H:i",
-                minTime: "12:00",
+                minTime: "14:30",
                 maxTime: "22:30",
                 enableTime: true,
                 dateFormat: "Y-m-d\\TH:i:S",
@@ -119,6 +119,7 @@
                         // return true to disable
                         var isTeambuilding = (date.getMonth() === 5 && date.getDate() === 30 && date.getFullYear() === 2025);
                         var isInThePast = date < (now - (24 * 60 * 60 * 1000));
+
                         return isTeambuilding || isInThePast;
                     }
                 ],
