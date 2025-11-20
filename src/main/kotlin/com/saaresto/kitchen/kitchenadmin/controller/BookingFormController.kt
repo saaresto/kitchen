@@ -3,6 +3,9 @@ package com.saaresto.kitchen.kitchenadmin.controller
 import com.saaresto.kitchen.kitchenadmin.dto.BookingRequest
 import com.saaresto.kitchen.kitchenadmin.model.Booking
 import com.saaresto.kitchen.kitchenadmin.service.BookingService
+import com.saaresto.kitchen.kitchenadmin.service.DisabledDateService
+import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.validation.BindingResult
@@ -10,12 +13,18 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
+import java.time.LocalDate
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.time.LocalDateTime
 
 @Controller
 @RequestMapping("/bookings")
-class BookingFormController(private val bookingService: BookingService) {
+class BookingFormController(
+    private val bookingService: BookingService,
+    private val disabledDateService: DisabledDateService
+) {
 
     @GetMapping("/create")
     fun showBookingForm(model: Model): String {
@@ -30,6 +39,26 @@ class BookingFormController(private val bookingService: BookingService) {
             ))
         }
         return "booking-form"
+    }
+
+    @GetMapping("/disabled-dates")
+    @ResponseBody
+    fun getDisabledDates(
+        @RequestParam("start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) startDate: LocalDate?,
+        @RequestParam("end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endDate: LocalDate?
+    ): ResponseEntity<List<String>> {
+        val start = startDate ?: LocalDate.now()
+        val end = endDate ?: start.plusMonths(3)
+
+        // Get disabled dates from service
+        val disabledDateTimes = disabledDateService.getDisabledDateTimesForRange(start, end)
+
+        // Format dates as ISO strings
+        val formattedDates = disabledDateTimes.map { 
+            it.toString() 
+        }
+
+        return ResponseEntity.ok(formattedDates)
     }
 
     @PostMapping("/create")
