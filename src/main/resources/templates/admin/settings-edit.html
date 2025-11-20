@@ -1,0 +1,69 @@
+<div th:fragment="content">
+    <h1 class="mb-4">Edit Disabled Date</h1>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Edit Disabled Date</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/admin/settings/disabled-dates/{id}/edit(id=${disabledDate.id})}" method="post">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="text" class="form-control" id="date" name="date" required data-flatpickr="date" 
+                               th:value="${#temporals.format(disabledDate.date, 'yyyy-MM-dd')}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="startTime" class="form-label">Start Time (optional)</label>
+                        <input type="text" class="form-control" id="startTime" name="startTime" data-flatpickr="time"
+                               th:value="${disabledDate.startTime != null ? #temporals.format(disabledDate.startTime, 'HH:mm') : ''}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="endTime" class="form-label">End Time (optional)</label>
+                        <input type="text" class="form-control" id="endTime" name="endTime" data-flatpickr="time"
+                               th:value="${disabledDate.endTime != null ? #temporals.format(disabledDate.endTime, 'HH:mm') : ''}">
+                    </div>
+                </div>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-8">
+                        <label for="description" class="form-label">Description (optional)</label>
+                        <input type="text" class="form-control" id="description" name="description" 
+                               th:value="${disabledDate.description}">
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mt-4">
+                            <input class="form-check-input" type="checkbox" id="isRecurring" name="isRecurring" 
+                                   th:checked="${disabledDate.isRecurring}">
+                            <label class="form-check-label" for="isRecurring">
+                                Recurring (yearly)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a th:href="@{/admin/settings}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script th:fragment="scripts">
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize date picker
+        flatpickr("input[data-flatpickr='date']", {
+            dateFormat: "Y-m-d",
+            allowInput: true
+        });
+        
+        // Initialize time pickers
+        flatpickr("input[data-flatpickr='time']", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            minuteIncrement: 30
+        });
+    });
+</script>

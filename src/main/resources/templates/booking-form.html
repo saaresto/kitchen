@@ -102,46 +102,110 @@
             var now = new Date()
             now.setMinutes(0,0,0);
             now.setHours(now.getHours() + 3);
-            // Initialize date-time pickers
-            flatpickr("input[data-flatpickr='datetime']", {
-                defaultDate: now,
-                altInput: true,
-                altFormat: "F j, Y, H:i",
-                minTime: "12:00",
-                maxTime: "22:30",
-                enableTime: true,
-                dateFormat: "Y-m-d\\TH:i:S",
-                time_24hr: true,
-                allowInput: true,
-                minuteIncrement: 30,
-                disable: [
-                    function(date) {
-                        // return true to disable
-                        var isTeambuilding = (date.getMonth() === 10 && date.getDate() === 24 && date.getFullYear() === 2025);
-                        var isInThePast = date < (now - (24 * 60 * 60 * 1000));
 
-                        return isTeambuilding || isInThePast;
-                    }
-                ],
-                locale: {
-                    "firstDayOfWeek": 1 // start week on Monday
-                },
-                // Ensure times are only at :00 or :30
-                onClose: function(selectedDates, dateStr, instance) {
-                    if (selectedDates.length > 0) {
-                        const date = selectedDates[0];
-                        const minutes = date.getMinutes();
-                        if (minutes !== 0 && minutes !== 30) {
-                            // Round to nearest half hour
-                            date.setMinutes(minutes < 15 ? 0 : (minutes < 45 ? 30 : 0));
-                            if (minutes >= 45) {
-                                date.setHours(date.getHours() + 1);
+            // Fetch disabled dates from the server
+            fetch('/bookings/disabled-dates')
+                .then(response => response.json())
+                .then(disabledDates => {
+                    // Convert ISO date strings to Date objects
+                    const disabledDateObjects = disabledDates.map(dateStr => new Date(dateStr));
+
+                    // Create an array of date strings in the format that flatpickr expects for direct disabling
+                    const disabledDateStrings = disabledDateObjects.map(date => {
+                        return date.toISOString();
+                    });
+
+                    // Initialize date-time picker with fetched disabled dates
+                    initializeFlatpickr(disabledDateObjects, disabledDateStrings);
+                })
+                .catch(error => {
+                    console.error('Error fetching disabled dates:', error);
+                    // Fallback initialization if fetch fails
+                    initializeFlatpickr([], []);
+                });
+
+            // Function to initialize flatpickr with disabled dates
+            function initializeFlatpickr(disabledDateObjects, disabledDateStrings) {
+                flatpickr("input[data-flatpickr='datetime']", {
+                    defaultDate: now,
+                    altInput: true,
+                    altFormat: "F j, Y, H:i",
+                    minTime: "12:00",
+                    maxTime: "22:30",
+                    enableTime: true,
+                    dateFormat: "Y-m-d\\TH:i:S",
+                    time_24hr: true,
+                    allowInput: true,
+                    minuteIncrement: 30,
+                    disable: [
+                        ...disabledDateStrings, // Add the disabled dates directly as strings
+                        function(date) {
+                            // Check if date is in the past
+                            var isInThePast = date < (now - (24 * 60 * 60 * 1000));
+                            if (isInThePast) return true;
+
+                            // Check if date and time match any disabled date
+                            for (const disabledDate of disabledDateObjects) {
+                                if (date.getFullYear() === disabledDate.getFullYear() &&
+                                    date.getMonth() === disabledDate.getMonth() &&
+                                    date.getDate() === disabledDate.getDate() &&
+                                    date.getHours() === disabledDate.getHours() &&
+                                    date.getMinutes() === disabledDate.getMinutes()) {
+                                    return true;
+                                }
                             }
-                            instance.setDate(date);
+
+                            return false;
+                        }
+                    ],
+                    locale: {
+                        "firstDayOfWeek": 1 // start week on Monday
+                    },
+                    // Ensure times are only at :00 or :30 and check if date is disabled
+                    onClose: function(selectedDates, dateStr, instance) {
+                        if (selectedDates.length > 0) {
+                            const date = selectedDates[0];
+                            //
+                            // // Check if the selected date is disabled
+                            // let isDisabled = false;
+                            //
+                            // // Check if date is in the past
+                            // if (date < (now - (24 * 60 * 60 * 1000))) {
+                            //     isDisabled = true;
+                            // }
+                            //
+                            // // Check if date matches any disabled date
+                            // for (const disabledDate of disabledDateObjects) {
+                            //     if (date.getFullYear() === disabledDate.getFullYear() &&
+                            //         date.getMonth() === disabledDate.getMonth() &&
+                            //         date.getDate() === disabledDate.getDate() &&
+                            //         date.getHours() === disabledDate.getHours() &&
+                            //         date.getMinutes() === disabledDate.getMinutes()) {
+                            //         isDisabled = true;
+                            //         break;
+                            //     }
+                            // }
+                            //
+                            // if (isDisabled) {
+                            //     // If date is disabled, reset to default date
+                            //     instance.setDate(now);
+                            //     return;
+                            // }
+
+                            // Ensure times are only at :00 or :30
+                            const minutes = date.getMinutes();
+                            if (minutes !== 0 && minutes !== 30) {
+                                // Round to nearest half hour
+                                date.setMinutes(minutes < 15 ? 0 : (minutes < 45 ? 30 : 0));
+                                if (minutes >= 45) {
+                                    date.setHours(date.getHours() + 1);
+                                }
+                                instance.setDate(date);
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
         });
     </script>
 </body>
