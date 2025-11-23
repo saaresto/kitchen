@@ -28,22 +28,33 @@ class NotificationService(
         val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
         val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
+        // Format the phone number for display
+        val formattedPhone = booking.mainVisitorPhone.let { phone ->
+            if (phone.startsWith("+")) phone else if (phone.startsWith("8")) "+7${phone.substring(1)}" else phone
+        }
+
+        // Format the phone number for WhatsApp link (remove any non-digit characters except the + at the beginning)
+        val whatsappPhone = formattedPhone.let { phone ->
+            if (phone.startsWith("+")) {
+                phone.substring(1).replace(Regex("\\D"), "")
+            } else {
+                phone.replace(Regex("\\D"), "")
+            }
+        }
+
+        val whatsappLink = "https://wa.me/$whatsappPhone"
+
         val message = """
             🔔 *New Booking Alert!* 🔔
 
             👤 *Visitor:* ${booking.mainVisitorName}
-            📱 *Phone:* ${
-            booking.mainVisitorPhone.let { phone ->
-                if (phone.startsWith("+")) phone else if (phone.startsWith(
-                        "8"
-                    )
-                ) "+7${phone.substring(1)}" else phone
-            }
-        }
+            📱 *Phone:* $formattedPhone
             📅 *Date:* ${booking.dateTime.format(dateFormatter)}
             🕒 *Time:* ${booking.dateTime.format(timeFormatter)}
             👥 *Guests:* ${booking.visitorsCount}
             ${if (booking.notes != null && booking.notes.isNotEmpty()) "📝 *Notes:* ${booking.notes}" else ""}
+
+            [💬 Chat on WhatsApp]($whatsappLink)
         """.trimIndent()
 
         staffMembers.forEach { staffMember ->
@@ -53,7 +64,8 @@ class NotificationService(
                 bot.sendMessage(
                     chatId = ChatId.fromId(staffMember.chatId.toLong()),
                     text = message,
-                    parseMode = ParseMode.MARKDOWN
+                    parseMode = ParseMode.MARKDOWN,
+                    disableWebPagePreview = true
                 )
             } catch (e: Exception) {
                 // Log the error but continue with other staff members
