@@ -84,6 +84,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://unpkg.com/flatpickr@4.6.13/dist/plugins/minMaxTimePlugin.js"></script>
 
     <!-- Initialize Flatpickr for date inputs -->
     <script>
@@ -112,6 +113,7 @@
 
                     // Create an array of date strings in the format that flatpickr expects for direct disabling
                     const disabledDateStrings = disabledDateObjects.map(date => {
+                        console.log("disabled date: ", date)
                         return date.toISOString();
                     });
 
@@ -126,6 +128,106 @@
 
             // Function to initialize flatpickr with disabled dates
             function initializeFlatpickr(disabledDateObjects, disabledDateStrings) {
+                // Create a table for the minMaxTimePlugin
+                const timeTable = {
+                    // Keep the existing example
+                    "2025-01-10": {
+                        minTime: "16:00",
+                        maxTime: "22:00"
+                    }
+                };
+
+                // Group disabled times by date
+                const disabledTimesByDate = {};
+
+                for (const disabledDate of disabledDateObjects) {
+                    // Format the date as YYYY-MM-DD for the table key
+                    const dateKey = `${disabledDate.getFullYear()}-${String(disabledDate.getMonth() + 1).padStart(2, '0')}-${String(disabledDate.getDate()).padStart(2, '0')}`;
+
+                    // Format the time as HH:MM
+                    const timeStr = `${String(disabledDate.getHours()).padStart(2, '0')}:${String(disabledDate.getMinutes()).padStart(2, '0')}`;
+
+                    // Initialize the date entry if it doesn't exist
+                    if (!disabledTimesByDate[dateKey]) {
+                        disabledTimesByDate[dateKey] = [];
+                    }
+
+                    // Add the time to the list of disabled times for this date
+                    disabledTimesByDate[dateKey].push(timeStr);
+                }
+
+                // Add entries to the timeTable for each date with disabled times
+                for (const [dateKey, disabledTimes] of Object.entries(disabledTimesByDate)) {
+                    // Skip if this date already has an entry in the timeTable (like our example)
+                    if (timeTable[dateKey]) continue;
+
+                    // Add the date to the timeTable with appropriate time constraints
+                    timeTable[dateKey] = {};
+
+                    // For each date with disabled times, we need to determine appropriate minTime and maxTime
+                    // This is a simplified approach - you may need to adjust based on your specific requirements
+                    if (disabledTimes.length > 0) {
+                        // Sort the disabled times
+                        disabledTimes.sort();
+
+                        // For demonstration, let's set constraints around the disabled times
+                        // This is just an example approach - adjust as needed for your use case
+
+                        // Handle both single and multiple disabled times
+                        // For simplicity, we'll just use the first and last disabled times to set constraints
+                        {
+                            const firstDisabledTime = disabledTimes[0];
+                            const lastDisabledTime = disabledTimes[disabledTimes.length - 1];
+
+                            // Parse the first disabled time
+                            const [firstHours, firstMinutes] = firstDisabledTime.split(':').map(Number);
+
+                            // Parse the last disabled time
+                            const [lastHours, lastMinutes] = lastDisabledTime.split(':').map(Number);
+
+                            // Check if the disabled times are in the second half of the day
+                            if (firstHours >= 16) {
+                                // If disabled times start in the second half of the day,
+                                // set maxTime to 30 minutes before the first disabled time
+                                let newMaxMinutes = firstMinutes - 30;
+                                let newMaxHours = firstHours;
+
+                                if (newMaxMinutes < 0) {
+                                    newMaxMinutes += 60;
+                                    newMaxHours -= 1;
+                                }
+
+                                // Format the new time
+                                const maxTime = `${String(newMaxHours).padStart(2, '0')}:${String(newMaxMinutes).padStart(2, '0')}`;
+
+                                // Only set if it's within reasonable bounds (adjust as needed)
+                                if (newMaxHours >= 12) {
+                                    timeTable[dateKey].maxTime = maxTime;
+                                }
+                            } else {
+                                // If disabled times are in the first half of the day,
+                                // set minTime to 30 minutes after the last disabled time
+                                let newMinMinutes = lastMinutes + 30;
+                                let newMinHours = lastHours;
+
+                                if (newMinMinutes >= 60) {
+                                    newMinMinutes -= 60;
+                                    newMinHours += 1;
+                                }
+
+                                // Format the new time
+                                const minTime = `${String(newMinHours).padStart(2, '0')}:${String(newMinMinutes).padStart(2, '0')}`;
+
+                                // Only set if it's within reasonable bounds (adjust as needed)
+                                if (newMinHours < 22) {
+                                    timeTable[dateKey].minTime = minTime;
+                                }
+                            }
+                        }
+                    }
+                }
+                console.log(timeTable);
+
                 flatpickr("input[data-flatpickr='datetime']", {
                     defaultDate: now,
                     altInput: true,
@@ -138,7 +240,7 @@
                     allowInput: true,
                     minuteIncrement: 30,
                     disable: [
-                        ...disabledDateStrings, // Add the disabled dates directly as strings
+                        // ...disabledDateStrings, // Add the disabled dates directly as strings
                         function(date) {
                             // Check if date is in the past
                             var isInThePast = date < (now - (24 * 60 * 60 * 1000));
@@ -157,6 +259,11 @@
 
                             return false;
                         }
+                    ],
+                    plugins: [
+                        new minMaxTimePlugin({
+                            table: timeTable
+                        })
                     ],
                     locale: {
                         "firstDayOfWeek": 1 // start week on Monday
