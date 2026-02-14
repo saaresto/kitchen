@@ -29,7 +29,7 @@ notification:
   token: ${NOTIFICATION_TOKEN:adminadminadmin}
 # Server Configuration
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 # Swagger UI / OpenAPI Configuration
 springdoc:
