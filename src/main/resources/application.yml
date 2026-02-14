@@ -25,11 +25,19 @@ spring:
       name: ${ADMIN_NAME:admin}
       password: ${ADMIN_PWD:admin}
 
+logging:
+  level:
+    org:
+      springframework:
+        boot:
+          web: DEBUG
+
 notification:
   token: ${NOTIFICATION_TOKEN:adminadminadmin}
 # Server Configuration
 server:
   port: ${PORT:8080}
+  address: 0.0.0.0
 
 # Swagger UI / OpenAPI Configuration
 springdoc:
