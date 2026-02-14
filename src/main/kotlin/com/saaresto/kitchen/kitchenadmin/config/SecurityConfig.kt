@@ -43,6 +43,9 @@ class SecurityConfig {
                     .requestMatchers("/api-docs/**").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()
 
+                    // Allow actuator endpoints
+                    .requestMatchers("/actuator/**").permitAll()
+
                     // Allow static resources
                     .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
 

@@ -1,24 +1,24 @@
 spring:
   application:
     name: kitchen-admin
-  
+
   # Database Configuration
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/kitchen}
     username: ${DATABASE_USERNAME:postgres}
     password: ${DATABASE_PWD:postgres}
     driver-class-name: org.postgresql.Driver
-  
+
   # Flyway Configuration
   flyway:
     enabled: true
     baseline-on-migrate: true
     locations: classpath:db/migration
-  
+
   # Exposed Configuration
   exposed:
     generate-ddl: false
-  
+
   # Security Configuration
   security:
     user:
@@ -39,3 +39,13 @@ springdoc:
     tagsSorter: alpha
   api-docs:
     path: /api-docs
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
