@@ -50,10 +50,17 @@ springdoc:
 
 # Actuator Configuration
 management:
+  health:
+    db:
+      enabled: false
+    diskspace:
+      enabled: false
   endpoints:
     web:
       exposure:
         include: health
   endpoint:
     health:
+      probes:
+        enabled: false
       show-details: always
