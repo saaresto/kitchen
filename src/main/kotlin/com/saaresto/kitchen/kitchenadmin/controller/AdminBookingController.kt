@@ -39,17 +39,15 @@ class AdminBookingController(private val bookingService: BookingService) {
         if (tab == "pending" || tab == "all") {
             val filterDate = date ?: LocalDate.now()
             val pendingBookings = if (date != null) {
-                // Filter by date
+                // Filter by date using database query instead of loading all bookings into memory
                 val startOfDay = filterDate.atStartOfDay()
                 val endOfDay = filterDate.plusDays(1).atStartOfDay()
-                bookingService.getAllBookings().filter { 
-                    (it.status == BookingStatus.PENDING || it.status == BookingStatus.WAIT_LIST || it.status == BookingStatus.CALL_AGAIN) && 
-                    it.dateTime >= startOfDay && 
-                    it.dateTime < endOfDay 
-                }
+                // Get bookings for the specific date and then filter by pending statuses
+                bookingService.getBookingsByDateRangeWithFilters(startOfDay, endOfDay, null, null)
+                    .filter { it.status == BookingStatus.PENDING || it.status == BookingStatus.WAIT_LIST || it.status == BookingStatus.CALL_AGAIN }
             } else {
-                // Show all pending bookings, sorted by createdAt (earliest first)
-                bookingService.getPendingBookingsOrderByCreatedAt()
+                // Show pending bookings with database-level limit to prevent memory issues
+                bookingService.getPendingBookingsOrderByCreatedAtWithLimit(100)
             }
 
             // Group bookings by status

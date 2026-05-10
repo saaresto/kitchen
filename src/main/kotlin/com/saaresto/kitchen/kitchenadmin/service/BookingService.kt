@@ -46,6 +46,14 @@ class BookingService(
         bookingRepository.findByStatusesOrderByCreatedAt(listOf(BookingStatus.PENDING, BookingStatus.WAIT_LIST, BookingStatus.CALL_AGAIN))
 
     /**
+     * Get pending bookings with limit sorted by createdAt (earliest first).
+     * This includes PENDING, WAIT_LIST, and CALL_AGAIN statuses.
+     * Limits results at database level to prevent memory issues.
+     */
+    fun getPendingBookingsOrderByCreatedAtWithLimit(limit: Int): List<Booking> =
+        bookingRepository.findByStatusesOrderByCreatedAtWithLimit(listOf(BookingStatus.PENDING, BookingStatus.WAIT_LIST, BookingStatus.CALL_AGAIN), limit)
+
+    /**
      * Get bookings for today.
      */
     fun getTodayBookings(): List<Booking> = 
@@ -127,7 +135,7 @@ class BookingService(
      */
     fun confirmBooking(id: UUID): Booking {
         val booking = getBookingById(id)
-        return bookingRepository.save(booking.copy(status = BookingStatus.CONFIRMED))
+        return bookingRepository.updateExisting(booking.copy(status = BookingStatus.CONFIRMED))
     }
 
     /**
@@ -136,7 +144,7 @@ class BookingService(
      */
     fun declineBooking(id: UUID): Booking {
         val booking = getBookingById(id)
-        return bookingRepository.save(booking.copy(status = BookingStatus.DECLINED))
+        return bookingRepository.updateExisting(booking.copy(status = BookingStatus.DECLINED))
     }
 
     /**
@@ -145,7 +153,7 @@ class BookingService(
      */
     fun waitListBooking(id: UUID): Booking {
         val booking = getBookingById(id)
-        return bookingRepository.save(booking.copy(status = BookingStatus.WAIT_LIST))
+        return bookingRepository.updateExisting(booking.copy(status = BookingStatus.WAIT_LIST))
     }
 
     /**
@@ -154,7 +162,7 @@ class BookingService(
      */
     fun callAgainBooking(id: UUID): Booking {
         val booking = getBookingById(id)
-        return bookingRepository.save(booking.copy(status = BookingStatus.CALL_AGAIN))
+        return bookingRepository.updateExisting(booking.copy(status = BookingStatus.CALL_AGAIN))
     }
 
     /**

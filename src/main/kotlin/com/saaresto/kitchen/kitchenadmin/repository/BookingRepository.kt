@@ -61,6 +61,18 @@ class BookingRepository {
     }
 
     /**
+     * Find bookings by multiple statuses with limit, sorted by createdAt (earliest first).
+     * This method prevents memory issues by limiting results at the database level.
+     */
+    fun findByStatusesOrderByCreatedAtWithLimit(statuses: List<BookingStatus>, limit: Int): List<Booking> = transaction {
+        BookingTable.selectAll()
+            .where { BookingTable.status inList statuses.map { it.name } }
+            .orderBy(BookingTable.createdAt to SortOrder.ASC)
+            .limit(limit)
+            .map { it.toBooking() }
+    }
+
+    /**
      * Find bookings for a specific date.
      */
     fun findByDate(date: LocalDateTime): List<Booking> = transaction {
@@ -160,6 +172,24 @@ class BookingRepository {
                 it[notes] = booking.notes
                 it[createdAt] = booking.createdAt
             }
+        }
+        booking
+    }
+
+    /**
+     * Update an existing booking without checking if it exists first.
+     * This is more efficient for operations like status changes where we know the booking exists.
+     */
+    fun updateExisting(booking: Booking): Booking = transaction {
+        BookingTable.update({ BookingTable.id eq booking.id }) {
+            it[status] = booking.status.name
+            it[mainVisitorName] = booking.mainVisitorName
+            it[mainVisitorPhone] = booking.mainVisitorPhone
+            it[visitorsCount] = booking.visitorsCount
+            it[dateTime] = booking.dateTime
+            it[tableId] = booking.tableId
+            it[notes] = booking.notes
+            it[createdAt] = booking.createdAt
         }
         booking
     }
