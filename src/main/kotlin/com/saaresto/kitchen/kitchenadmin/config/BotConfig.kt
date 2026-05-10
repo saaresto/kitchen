@@ -6,6 +6,7 @@ import com.github.kotlintelegrambot.dispatcher.command
 import com.github.kotlintelegrambot.dispatcher.text
 import com.github.kotlintelegrambot.entities.ChatId
 import com.saaresto.kitchen.kitchenadmin.service.StaffService
+import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,6 +16,23 @@ class BotConfig {
 
     @Value("\${notification.token}")
     lateinit var botToken: String
+
+    @PostConstruct
+    fun configureHttpClientProperties() {
+        // Configure system properties to optimize HTTP client behavior globally
+        System.setProperty("http.keepAlive", "true")
+        System.setProperty("http.maxConnections", "2")
+        System.setProperty("http.maxRedirects", "3")
+        System.setProperty("sun.net.http.allowRestrictedHeaders", "true")
+
+        // Configure OkHttp specific properties to reduce memory usage
+        System.setProperty("okhttp.platform.conscrypt", "false")
+        System.setProperty("okhttp3.OkHttpClient.cache.size", "1048576") // 1MB cache
+
+        // Disable HTTP/2 to avoid the specific memory issues seen in the stack trace
+        System.setProperty("http2.disable", "true")
+        System.setProperty("jdk.httpclient.HttpClient.log", "errors")
+    }
 
     @Bean
     fun bot(staffService: StaffService): Bot {

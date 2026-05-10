@@ -2,6 +2,12 @@ spring:
   application:
     name: kitchen-admin
 
+  # JVM and memory optimization settings
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+
   # Database Configuration
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/kitchen}
@@ -30,7 +36,9 @@ logging:
     org:
       springframework:
         boot:
-          web: DEBUG
+          web: INFO
+    okhttp3: WARN
+    okio: WARN
 
 notification:
   token: ${NOTIFICATION_TOKEN:adminadminadmin}
@@ -38,6 +46,15 @@ notification:
 server:
   port: ${PORT:8080}
   address: 0.0.0.0
+  # Optimize server for memory usage
+  tomcat:
+    threads:
+      max: 50
+      min-spare: 5
+    max-connections: 100
+    connection-timeout: 20000
+    max-http-form-post-size: 2MB
+    max-swallow-size: 2MB
 
 # Swagger UI / OpenAPI Configuration
 springdoc:
