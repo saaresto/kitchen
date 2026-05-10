@@ -19,19 +19,37 @@ class BotConfig {
 
     @PostConstruct
     fun configureHttpClientProperties() {
-        // Configure system properties to optimize HTTP client behavior globally
-        System.setProperty("http.keepAlive", "true")
-        System.setProperty("http.maxConnections", "2")
-        System.setProperty("http.maxRedirects", "3")
+        // AGGRESSIVE MEMORY OPTIMIZATION - Disable all caching and limit connections
+        System.setProperty("http.keepAlive", "false")
+        System.setProperty("http.maxConnections", "1")
+        System.setProperty("http.maxRedirects", "1")
         System.setProperty("sun.net.http.allowRestrictedHeaders", "true")
 
-        // Configure OkHttp specific properties to reduce memory usage
+        // Completely disable OkHttp caching and optimize for minimal memory usage
         System.setProperty("okhttp.platform.conscrypt", "false")
-        System.setProperty("okhttp3.OkHttpClient.cache.size", "1048576") // 1MB cache
+        System.setProperty("okhttp3.OkHttpClient.cache.size", "0") // Disable cache entirely
+        System.setProperty("okhttp3.OkHttpClient.connectionPool.maxIdleConnections", "1")
+        System.setProperty("okhttp3.OkHttpClient.connectionPool.keepAliveDuration", "5000") // 5 seconds
+        System.setProperty("okhttp3.OkHttpClient.connectTimeout", "10000") // 10 seconds
+        System.setProperty("okhttp3.OkHttpClient.readTimeout", "15000") // 15 seconds
+        System.setProperty("okhttp3.OkHttpClient.writeTimeout", "15000") // 15 seconds
 
-        // Disable HTTP/2 to avoid the specific memory issues seen in the stack trace
+        // Disable HTTP/2 and force HTTP/1.1 to avoid buffer accumulation issues
         System.setProperty("http2.disable", "true")
         System.setProperty("jdk.httpclient.HttpClient.log", "errors")
+        System.setProperty("jdk.httpclient.allowRestrictedHeaders", "true")
+
+        // Additional JVM optimizations for memory management
+        System.setProperty("java.net.useSystemProxies", "false")
+        System.setProperty("networkaddress.cache.ttl", "60")
+        System.setProperty("networkaddress.cache.negative.ttl", "10")
+
+        // Force garbage collection more frequently
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "1")
+
+        // Telegram bot specific optimizations
+        System.setProperty("telegram.bot.connectionTimeout", "10000")
+        System.setProperty("telegram.bot.readTimeout", "15000")
     }
 
     @Bean
