@@ -79,6 +79,37 @@ class BookingService(
         bookingRepository.findByDateRangeAndFilters(startDate, endDate, visitorName, visitorPhone)
 
     /**
+     * Get bookings within a date range with optional visitor name and phone filters, with pagination.
+     */
+    fun getBookingsByDateRangeWithFiltersPaginated(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+        visitorName: String? = null,
+        visitorPhone: String? = null,
+        page: Int = 0,
+        pageSize: Int = 10
+    ): List<Booking> =
+        bookingRepository.findByDateRangeAndFiltersPaginated(
+            startDate, 
+            endDate, 
+            visitorName, 
+            visitorPhone, 
+            offset = page.toLong() * pageSize, 
+            limit = pageSize
+        )
+
+    /**
+     * Count bookings within a date range with optional visitor name and phone filters.
+     */
+    fun countBookingsByDateRangeWithFilters(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+        visitorName: String? = null,
+        visitorPhone: String? = null
+    ): Long =
+        bookingRepository.countByDateRangeAndFilters(startDate, endDate, visitorName, visitorPhone)
+
+    /**
      * Create a new booking.
      * @throws IllegalArgumentException if booking time is invalid
      */

@@ -89,19 +89,27 @@ class AdminBookingController(private val bookingService: BookingService) {
             val start = startDate ?: LocalDate.now().minusMonths(1)
             val end = endDate ?: LocalDate.now()
 
-            // Get all bookings in the date range with filters
-            val allBookings = bookingService.getBookingsByDateRangeWithFilters(
+            val pageSize = 10
+            
+            // Get paginated bookings from database
+            val historyBookings = bookingService.getBookingsByDateRangeWithFiltersPaginated(
+                start.atStartOfDay(),
+                end.atStartOfDay(),
+                visitorName,
+                visitorPhone,
+                page = page,
+                pageSize = pageSize
+            )
+
+            // Get total count for pagination
+            val totalBookings = bookingService.countBookingsByDateRangeWithFilters(
                 start.atStartOfDay(),
                 end.atStartOfDay(),
                 visitorName,
                 visitorPhone
             )
-
-            // Simple pagination
-            val pageSize = 10
-            val totalPages = (allBookings.size + pageSize - 1) / pageSize
+            val totalPages = ((totalBookings + pageSize - 1) / pageSize).toInt()
             val currentPage = page.coerceIn(0, maxOf(0, totalPages - 1))
-            val historyBookings = allBookings.drop(currentPage * pageSize).take(pageSize)
 
             model.addAttribute("historyBookings", historyBookings)
             model.addAttribute("startDate", start)

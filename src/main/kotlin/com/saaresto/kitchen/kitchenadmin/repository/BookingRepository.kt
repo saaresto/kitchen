@@ -5,23 +5,13 @@ import com.saaresto.kitchen.kitchenadmin.model.Booking
 import com.saaresto.kitchen.kitchenadmin.model.BookingStatus
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.util.UUID
 
 @Repository
 class BookingRepository {
-
-    /**
-     * Find all bookings in the database.
-     */
-    fun findAll(): List<Booking> = transaction {
-        BookingTable.selectAll().map { it.toBooking() }
-    }
 
     /**
      * Find a booking by ID.
@@ -37,16 +27,6 @@ class BookingRepository {
      */
     fun findByStatus(status: BookingStatus): List<Booking> = transaction {
         BookingTable.selectAll().where { BookingTable.status eq status.name }
-            .map { it.toBooking() }
-    }
-
-    /**
-     * Find bookings by status, sorted by createdAt (earliest first).
-     */
-    fun findByStatusOrderByCreatedAt(status: BookingStatus): List<Booking> = transaction {
-        BookingTable.selectAll()
-            .where { BookingTable.status eq status.name }
-            .orderBy(BookingTable.createdAt to SortOrder.ASC)
             .map { it.toBooking() }
     }
 
@@ -139,6 +119,68 @@ class BookingRepository {
 
         query.orderBy(BookingTable.createdAt to SortOrder.DESC)
             .map { it.toBooking() }
+    }
+
+    /**
+     * Find bookings within a date range with optional visitor name and phone filters, with pagination.
+     */
+    fun findByDateRangeAndFiltersPaginated(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+        visitorName: String? = null,
+        visitorPhone: String? = null,
+        offset: Long = 0,
+        limit: Int = 10
+    ): List<Booking> = transaction {
+        val startOfDay = startDate.toLocalDate().atStartOfDay()
+        val endOfDay = endDate.toLocalDate().plusDays(1).atStartOfDay()
+
+        var query = BookingTable.selectAll()
+            .where {
+                (BookingTable.dateTime greaterEq startOfDay) and
+                (BookingTable.dateTime less endOfDay)
+            }
+
+        if (!visitorName.isNullOrBlank()) {
+            query = query.andWhere { BookingTable.mainVisitorName.lowerCase() like "%${visitorName.lowercase()}%" }
+        }
+
+        if (!visitorPhone.isNullOrBlank()) {
+            query = query.andWhere { BookingTable.mainVisitorPhone like "%${visitorPhone}%" }
+        }
+
+        query.orderBy(BookingTable.createdAt to SortOrder.DESC)
+            .limit(limit, offset = offset)
+            .map { it.toBooking() }
+    }
+
+    /**
+     * Count bookings within a date range with optional visitor name and phone filters.
+     */
+    fun countByDateRangeAndFilters(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+        visitorName: String? = null,
+        visitorPhone: String? = null
+    ): Long = transaction {
+        val startOfDay = startDate.toLocalDate().atStartOfDay()
+        val endOfDay = endDate.toLocalDate().plusDays(1).atStartOfDay()
+
+        var query = BookingTable.selectAll()
+            .where {
+                (BookingTable.dateTime greaterEq startOfDay) and
+                (BookingTable.dateTime less endOfDay)
+            }
+
+        if (!visitorName.isNullOrBlank()) {
+            query = query.andWhere { BookingTable.mainVisitorName.lowerCase() like "%${visitorName.lowercase()}%" }
+        }
+
+        if (!visitorPhone.isNullOrBlank()) {
+            query = query.andWhere { BookingTable.mainVisitorPhone like "%${visitorPhone}%" }
+        }
+
+        query.count()
     }
 
     /**

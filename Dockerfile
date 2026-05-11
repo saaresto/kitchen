@@ -14,7 +14,7 @@ COPY src ./src
 RUN gradle bootJar --no-daemon
 
 # Runtime stage
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 # Install wget for health check
 RUN apk add --no-cache wget
@@ -34,10 +34,10 @@ ENV DATABASE_URL=jdbc:postgresql://localhost:5432/kitchen \
     ADMIN_NAME=admin \
     ADMIN_PWD=admin \
     NOTIFICATION_TOKEN=adminadminadmin \
-    JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseContainerSupport"
+    JAVA_OPTS="-Xms256m -Xmx320m -Xss256k -XX:TieredStopAtLevel=1 -XX:+UseSerialGC -XX:MaxMetaspaceSize=128m -XX:+ExitOnOutOfMemoryError"
 
 # Run the application with optimized JVM settings for containers
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Dspring.main.lazy-initialization=true -jar /app/app.jar"]
 
 # Digital Ocean App Platform Deployment Notes:
 # 1. Make sure to set the following environment variables in the App Platform:

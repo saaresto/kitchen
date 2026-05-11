@@ -1,12 +1,10 @@
 spring:
   application:
     name: kitchen-admin
-
-  # JVM and memory optimization settings
-  jpa:
-    open-in-view: false
-    hibernate:
-      ddl-auto: none
+  main:
+    lazy-initialization: true
+  thymeleaf:
+    cache: true
 
   # Database Configuration
   datasource:
