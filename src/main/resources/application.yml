@@ -7,49 +7,13 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: none
-      # Additional Hibernate memory optimizations
-      jdbc:
-        batch_size: 5  # Small batch size to reduce memory usage
-        fetch_size: 10  # Small fetch size
-      cache:
-        use_second_level_cache: false  # Disable second level cache
-        use_query_cache: false  # Disable query cache
-    properties:
-      hibernate:
-        jdbc:
-          lob:
-            non_contextual_creation: true
-        temp:
-          use_jdbc_metadata_defaults: false
 
-  # Additional Spring Boot memory optimizations
-  main:
-    lazy-initialization: true  # Enable lazy initialization to reduce startup memory
-  task:
-    execution:
-      pool:
-        core-size: 1
-        max-size: 2
-        queue-capacity: 10
-    scheduling:
-      pool:
-        size: 1
-
-  # Database Configuration with aggressive connection pooling
+  # Database Configuration
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/kitchen}
     username: ${DATABASE_USERNAME:postgres}
     password: ${DATABASE_PWD:postgres}
     driver-class-name: org.postgresql.Driver
-    # HikariCP connection pool optimization for minimal memory usage
-    hikari:
-      maximum-pool-size: 3  # Minimal pool size
-      minimum-idle: 1
-      connection-timeout: 10000  # 10 seconds
-      idle-timeout: 300000  # 5 minutes
-      max-lifetime: 600000  # 10 minutes
-      leak-detection-threshold: 60000  # 1 minute
-      pool-name: KitchenAdminPool
 
   # Flyway Configuration
   flyway:
@@ -82,18 +46,15 @@ notification:
 server:
   port: ${PORT:8080}
   address: 0.0.0.0
-  # AGGRESSIVE memory optimization for server
+  # Optimize server for memory usage
   tomcat:
     threads:
-      max: 10  # Reduced from 50 to minimize memory usage
-      min-spare: 2  # Reduced from 5
-    max-connections: 20  # Reduced from 100
-    connection-timeout: 15000  # Reduced from 20000
-    max-http-form-post-size: 1MB  # Reduced from 2MB
-    max-swallow-size: 1MB  # Reduced from 2MB
-    accept-count: 10  # Limit queue size
-    max-keep-alive-requests: 5  # Limit keep-alive requests
-    keep-alive-timeout: 5000  # 5 seconds keep-alive
+      max: 50
+      min-spare: 5
+    max-connections: 100
+    connection-timeout: 20000
+    max-http-form-post-size: 2MB
+    max-swallow-size: 2MB
 
 # Swagger UI / OpenAPI Configuration
 springdoc:

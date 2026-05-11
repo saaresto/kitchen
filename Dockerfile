@@ -34,30 +34,7 @@ ENV DATABASE_URL=jdbc:postgresql://localhost:5432/kitchen \
     ADMIN_NAME=admin \
     ADMIN_PWD=admin \
     NOTIFICATION_TOKEN=adminadminadmin \
-    JAVA_OPTS="-Xms128m -Xmx768m \
-    -XX:+UseContainerSupport \
-    -XX:+UseG1GC \
-    -XX:+UnlockExperimentalVMOptions \
-    -XX:MaxGCPauseMillis=100 \
-    -XX:G1HeapRegionSize=8m \
-    -XX:G1NewSizePercent=20 \
-    -XX:G1MaxNewSizePercent=40 \
-    -XX:+ExitOnOutOfMemoryError \
-    -XX:+HeapDumpOnOutOfMemoryError \
-    -XX:HeapDumpPath=/tmp/heapdump.hprof \
-    -XX:+UseStringDeduplication \
-    -XX:StringDeduplicationAgeThreshold=3 \
-    -XX:MaxMetaspaceSize=128m \
-    -XX:CompressedClassSpaceSize=32m \
-    -XX:ReservedCodeCacheSize=32m \
-    -XX:InitialCodeCacheSize=16m \
-    -Xss256k \
-    -XX:+TieredCompilation \
-    -XX:TieredStopAtLevel=1 \
-    -Djava.security.egd=file:/dev/./urandom \
-    -Dfile.encoding=UTF-8 \
-    -Djava.awt.headless=true \
-    -Dspring.backgroundpreinitializer.ignore=true"
+    JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseContainerSupport"
 
 # Run the application with optimized JVM settings for containers
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
