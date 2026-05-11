@@ -188,7 +188,9 @@ class DisabledDateService(private val disabledDateRepository: DisabledDateReposi
             val maxTime = LocalTime.of(22, 30)
             while (time <= maxTime && result.size < 10000) { // Safety limit
                 result.add(LocalDateTime.of(date, time))
-                time = time.plusMinutes(30)
+                val nextTime = time.plusMinutes(30)
+                if (nextTime <= time) break // Wrapped around or didn't advance
+                time = nextTime
             }
         } else if (startTime != null && endTime != null) {
             // Specific time range is disabled
@@ -196,7 +198,9 @@ class DisabledDateService(private val disabledDateRepository: DisabledDateReposi
             val endTimeNonNull = endTime!!
             while (time <= endTimeNonNull && result.size < 10000) { // Safety limit
                 result.add(LocalDateTime.of(date, time))
-                time = time.plusMinutes(30)
+                val nextTime = time.plusMinutes(30)
+                if (nextTime <= time) break // Wrapped around or didn't advance
+                time = nextTime
             }
         }
     }

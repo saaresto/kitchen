@@ -132,4 +132,29 @@ class DisabledDateMemoryTest {
         assertNotNull(result)
         assertTrue(result.size <= 10000, "Should respect safety limits: ${result.size}")
     }
+
+    @Test
+    fun `test addDisabledTimesForDate with potential infinite loop`() {
+        // Given
+        val startDate = LocalDate.of(2024, 5, 1)
+        val endDate = startDate // Same day
+        
+        val disabledDates = listOf(
+            DisabledDate(
+                id = UUID.randomUUID(),
+                date = startDate,
+                startTime = LocalTime.of(23, 0),
+                endTime = LocalTime.of(23, 30),
+                isRecurring = false
+            )
+        )
+
+        Mockito.`when`(disabledDateRepository.findByDateRange(any(), any())).thenReturn(disabledDates)
+        Mockito.`when`(disabledDateRepository.findRecurring()).thenReturn(emptyList())
+
+        // When/Then - this should not hang
+        assertTimeoutPreemptively(java.time.Duration.ofSeconds(5)) {
+            disabledDateService.getDisabledDateTimesForRange(startDate, endDate)
+        }
+    }
 }
