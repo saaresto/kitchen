@@ -2,6 +2,7 @@ package com.saaresto.kitchen.kitchenadmin.controller
 
 import com.saaresto.kitchen.kitchenadmin.dto.BookingRequest
 import com.saaresto.kitchen.kitchenadmin.service.BookingService
+import com.saaresto.kitchen.kitchenadmin.service.DisabledDateService
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -22,6 +23,9 @@ class PhoneNumberNormalizationTest {
 
     @Mock
     private lateinit var bookingService: BookingService
+
+    @Mock
+    private lateinit var disabledDateService: DisabledDateService
 
     @Mock
     private lateinit var bindingResult: BindingResult

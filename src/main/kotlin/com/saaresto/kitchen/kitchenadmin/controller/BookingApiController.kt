@@ -18,12 +18,6 @@ import java.util.UUID
 @RequestMapping("/api/bookings")
 class BookingApiController(private val bookingService: BookingService) {
 
-    @GetMapping
-    fun getAllBookings(): ResponseEntity<List<BookingResponse>> {
-        val bookings = bookingService.getAllBookings()
-        return ResponseEntity.ok(bookings.map { BookingResponse.fromBooking(it) })
-    }
-
     @GetMapping("/{id}")
     fun getBookingById(@PathVariable id: UUID): ResponseEntity<BookingResponse> {
         return try {

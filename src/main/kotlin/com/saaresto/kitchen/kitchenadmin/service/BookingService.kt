@@ -4,7 +4,6 @@ import com.saaresto.kitchen.kitchenadmin.model.Booking
 import com.saaresto.kitchen.kitchenadmin.model.BookingStatus
 import com.saaresto.kitchen.kitchenadmin.model.Visitor
 import com.saaresto.kitchen.kitchenadmin.repository.BookingRepository
-import com.saaresto.kitchen.kitchenadmin.repository.VisitorRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -19,11 +18,6 @@ class BookingService(
     private val notificationService: NotificationService
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
-
-    /**
-     * Get all bookings.
-     */
-    fun getAllBookings(): List<Booking> = bookingRepository.findAll()
 
     /**
      * Get a booking by ID.
