@@ -5,6 +5,7 @@ import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.ParseMode
 import com.saaresto.kitchen.kitchenadmin.model.Booking
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.time.format.DateTimeFormatter
 
@@ -18,6 +19,7 @@ class NotificationService(
     /**
      * Send a notification to all staff members about a new booking.
      */
+    @Async
     fun sendBookingNotification(booking: Booking) {
         val staffMembers = staffService.getAllStaffMembers()
 
