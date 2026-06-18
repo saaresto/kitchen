@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("plugin.spring") version "1.9.25"
+    kotlin("jvm") version "2.3.0"
+    kotlin("plugin.spring") version "2.3.0"
     id("org.springframework.boot") version "3.4.5"
     id("io.spring.dependency-management") version "1.1.7"
 }
@@ -41,7 +41,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:0.48.0")
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.48.0")
 
-    implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.3.0")
+    implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:10.0.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     runtimeOnly("org.postgresql:postgresql")

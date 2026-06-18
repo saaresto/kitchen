@@ -2,6 +2,7 @@ package com.saaresto.kitchen.kitchenadmin.service
 
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.entities.ChatId
+import com.github.kotlintelegrambot.entities.LinkPreviewOptions
 import com.github.kotlintelegrambot.entities.ParseMode
 import com.saaresto.kitchen.kitchenadmin.model.Booking
 import org.slf4j.LoggerFactory
@@ -67,7 +68,9 @@ class NotificationService(
                     chatId = ChatId.fromId(staffMember.chatId.toLong()),
                     text = message,
                     parseMode = ParseMode.MARKDOWN,
-                    disableWebPagePreview = true
+                    linkPreviewOptions = LinkPreviewOptions(
+                        isDisabled = true
+                    )
                 )
                 result.fold({
                     logger.info("Successfully sent notification to staff member with chat ID: {}", staffMember.chatId)
