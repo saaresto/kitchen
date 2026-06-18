@@ -54,7 +54,7 @@ class NotificationService(
             📅 *Date:* ${booking.dateTime.format(dateFormatter)}
             🕒 *Time:* ${booking.dateTime.format(timeFormatter)}
             👥 *Guests:* ${booking.visitorsCount}
-            ${if (booking.notes != null && booking.notes.isNotEmpty()) "📝 *Notes:* ${booking.notes}" else ""}
+            ${if (!booking.notes.isNullOrEmpty()) "📝 *Notes:* ${booking.notes}" else ""}
 
             [💬 Chat on WhatsApp]($whatsappLink)
         """.trimIndent()

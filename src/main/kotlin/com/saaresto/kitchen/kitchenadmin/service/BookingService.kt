@@ -118,7 +118,9 @@ class BookingService(
         validateBookingTime(booking.dateTime)
 
         // Save the booking
+        logger.info("Saving the booking for ${booking.mainVisitorName}")
         val savedBooking = bookingRepository.save(booking)
+        logger.info("Saved the booking for ${booking.mainVisitorName}")
 
         // Create a visitor record for the main visitor
         val visitor = Visitor(
@@ -126,7 +128,10 @@ class BookingService(
             name = booking.mainVisitorName,
             notes = "Created at ${booking.dateTime.format(DateTimeFormatter.ISO_DATE_TIME)} from booking ${booking.id}"
         )
+
+        logger.info("Updating visitor for ${booking.mainVisitorName}")
         visitorRepository.createVisitor(visitor)
+        logger.info("Updated visitor for ${booking.mainVisitorName}")
 
         // Send notification to staff members if booking is pending
         if (savedBooking.status == BookingStatus.PENDING) {
@@ -134,6 +139,7 @@ class BookingService(
             notificationService.sendBookingNotification(savedBooking)
         }
 
+        logger.info("Done processing booking for ${booking.mainVisitorName}")
         return savedBooking
     }
 
