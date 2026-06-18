@@ -63,12 +63,17 @@ class NotificationService(
             try {
                 logger.info("Sending notification to staff member with chat ID: {}", staffMember.chatId)
 
-                bot.sendMessage(
+                val result = bot.sendMessage(
                     chatId = ChatId.fromId(staffMember.chatId.toLong()),
                     text = message,
                     parseMode = ParseMode.MARKDOWN,
                     disableWebPagePreview = true
                 )
+                result.fold({
+                    logger.info("Successfully sent notification to staff member with chat ID: {}", staffMember.chatId)
+                }, { error ->
+                    logger.error("Failed to send notification to staff member {}: {}", staffMember.username, error.toString())
+                })
             } catch (e: Exception) {
                 // Log the error but continue with other staff members
                 logger.error("Failed to send notification to staff member ${staffMember.username}: ${e.message}")
